@@ -45,6 +45,7 @@ public partial class Commands {
 
     private static void DefaultEnt() {
         EntAdd("player", () => new Player());
+        EntAdd("particle", () => new GameObject("Particles").AddComponent<ParticleSystemComponent>().GameObject);
         EntAdd("camera2d", () => {
             var gameObject = new GameObject("camera2d");
             var camera = gameObject.AddComponent<Camera2D>();

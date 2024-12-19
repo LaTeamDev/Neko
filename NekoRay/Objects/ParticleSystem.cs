@@ -11,12 +11,18 @@ public class ParticleSystem : NekoObject {
         _pool = new ParticlePool(poolSize);
     }
     
+    private readonly List<int> _activeParticleIndices = new();
+
     public int PoolSize {
         get => _pool.Size;
-        set => _pool.Resize(value);
+        set {
+            if (value < _activeParticleIndices.Count)
+                throw new InvalidOperationException("Cannot resize pool smaller than the number of active particles.");
+            _pool.Resize(value);
+        }
     }
 
-    public int Count => _pool.ActiveCount;
+    public int Count => _activeParticleIndices.Count;
     
     public Vector3 Direction { get; }
     public Vector3 Position { get; set; }
@@ -45,38 +51,46 @@ public class ParticleSystem : NekoObject {
     public bool Stopped { get; private set; } = true;
     
     public void Pause() {
-        Paused = true;
+        Paused = !Paused;
     }
 
     public void Reset() {
         _pool.Reset();
+        _activeParticleIndices.Clear();
         Stop();
     }
     
     public void Draw() {
-        foreach (var p in _pool.GetActiveParticles()) {
+        foreach (var idx in _activeParticleIndices) {
+            ref var p = ref _pool.GetParticleRef(idx); 
             Raylib.DrawPixelV(p.Position.ToVector2(), p.Color);
         }
     }
     
+    private float _emissionAccumulator = 0f;
+    
     public void Update(float dt) {
         if (!Active) return;
-        foreach (ref var p in _pool.GetActiveParticles()) {
+        foreach (var idx in _activeParticleIndices.ToList()) {
+            ref var p = ref _pool.GetParticleRef(idx); 
             UpdateParticle(ref p, dt);
             if (p.Lifetime <= 0) {
-                _pool.Return(ref p);
+                _pool.Return(idx);
+                _activeParticleIndices.Remove(idx);
             }
         }
 
         // ReSharper disable once CompareOfFloatsByEqualityOperator
         if (_emitterLife == -1) return;
-        
-        var meow = _emitterLife;
+    
         _emitterLife -= dt;
         if (_emitterLife < 0f) return;
-        while (meow >= _emitterLife) {
-            meow -= EmissionRate;
+
+        _emissionAccumulator += dt;
+        float emissionInterval = 1.0f / EmissionRate;
+        while (_emissionAccumulator >= emissionInterval) {
             Emit();
+            _emissionAccumulator -= emissionInterval;
         }
     }
 
@@ -87,19 +101,38 @@ public class ParticleSystem : NekoObject {
     }
 
     public void Emit() {
-        var p = _pool.Rent();
+        var idx = _pool.Rent();
+        if (idx == -1)
+            return;
+        ref var p = ref _pool.GetParticleRef(idx); 
         if (p.IsNull) return;
         p.Lifetime = ParticleLifetime.min+(ParticleLifetime.max-ParticleLifetime.min)*Random.NextSingle();
         p.Color = Color;
         p.Position = Position;
+        var direction = Vector3.Transform(Direction, Rotation);
+        var spread = new Vector3(
+            (Random.NextSingle() - 0.5f) * Spread.X,
+            (Random.NextSingle() - 0.5f) * Spread.Y,
+            (Random.NextSingle() - 0.5f) * Spread.Z
+        );
+        p.Velocity = (direction + spread) * Speed;
+
+        _activeParticleIndices.Add(idx);
     }
 
     private void UpdateParticle(ref Particle p, float dt) {
         p.Color = Color;
         p.Velocity += Acceleration * dt;
-        p.Velocity *= LinearDamping * dt;
+        //p.Velocity *= MathF.Pow(LinearDamping, dt);
         p.Position += p.Velocity*dt;
         p.Lifetime -= dt;
+        if (TangentialAcceleration != 0) {
+            var tangent = Vector3.Cross(p.Velocity, Vector3.UnitZ);
+            if (tangent != Vector3.Zero) {
+                tangent = Vector3.Normalize(tangent);
+                p.Velocity += tangent * (TangentialAcceleration * dt);
+            }
+        }
     }
 
     public void Stop() {
@@ -110,12 +143,9 @@ public class ParticleSystem : NekoObject {
     }
     
     public void Start() {
+        Paused = false;
         if (Active) return;
         Active = true;
-        if (Paused) {
-            Paused = false;
-            return;
-        }
         Stopped = false;
         _emitterLife = EmitterLifetime;
     }
@@ -126,13 +156,13 @@ public class ParticleSystem : NekoObject {
     }
 }
 
-internal class ParticlePool {
+internal class ParticlePool : IDisposable {
     private IMemoryOwner<Particle> _memoryOwner;
     private Memory<Particle> _particles;
     private readonly Stack<int> _freeIndices;
-    
     private int _activeCount;
     private bool _isDisposed;
+    private readonly object _lock = new object();
 
     public int Size => _particles.Length;
     public int ActiveCount => _activeCount;
@@ -149,89 +179,82 @@ internal class ParticlePool {
     }
 
     public void Reset() {
-        var span = _particles.Span;
-        for (var i = 0; i < span.Length; i++) {
-            span[i].Reset();
-            span[i].IsActive = false;
-            _freeIndices.Push(i);
-        }
-    }
-
-    private Particle NullParticle = new Particle {IsNull = true};
-
-    public ref Particle Rent() {
-        if (_freeIndices.Count == 0)
-            return ref NullParticle;
-        
-        var index = _freeIndices.Pop();
-        ref var particle = ref _particles.Span[index];
-        particle.IsActive = true;
-        _activeCount++;
-        return ref particle;
-    }
-    
-    private int GetParticleIndex(ref Particle particle) {
-        var span = _particles.Span;
-        for (var i = 0; i < span.Length; i++) {
-            if (span[i] == particle)
-                return i;
-        }
-        return -1;
-    }
-    
-    public void Resize(int newSize) {
-        if (newSize <= 0) throw new ArgumentException("New size must be greater than 0", nameof(newSize));
-        if (newSize == Size) return;
-
-        var newMemoryOwner = MemoryPool<Particle>.Shared.Rent(newSize);
-        var newParticles = newMemoryOwner.Memory;
-        
-        var oldSpan = _particles.Span;
-        var newSpan = newParticles.Span;
-        var activeParticles = new List<Particle>();
-        
-        for (var i = 0; i < oldSpan.Length; i++) {
-            if (oldSpan[i].IsActive) {
-                activeParticles.Add(oldSpan[i]);
+        lock(_lock) {
+            var span = _particles.Span;
+            for (var i = 0; i < span.Length; i++) {
+                span[i].Reset();
+                span[i].IsActive = false;
+                _freeIndices.Push(i);
             }
+            _activeCount = 0;
         }
-        
-        _freeIndices.Clear();
-
-        // Mark all new particles as inactive initially
-        for (var i = newSize - 1; i >= 0; i--) {
-            newSpan[i].IsActive = false;
-            _freeIndices.Push(i);
-        }
-
-        // Copy active particles to new array
-        foreach (var particle in activeParticles) {
-            if (_freeIndices.Count == 0) break; // No more space in new array
-
-            var newIndex = _freeIndices.Pop();
-            newSpan[newIndex] = particle;
-        }
-
-        // Dispose old memory and update references
-        _memoryOwner.Dispose();
-        _memoryOwner = newMemoryOwner;
-        _particles = newParticles;
-        _activeCount = Math.Min(_activeCount, newSize);
     }
 
-    public void Return(ref Particle particle) {
-        if (!particle.IsActive) return;
-
-        var index = GetParticleIndex(ref particle);
-        if (index == -1) return;
-
-        particle.Reset();
-        particle.IsActive = false;
-        _freeIndices.Push(index);
-        _activeCount--;
+    public int Rent() {
+        return Rent(out _);
     }
     
-    public Span<Particle> GetActiveParticles() => _particles.Span;
+    public int Rent(out Particle? particle) {
+        lock(_lock) {
+            if (IsFull) {
+                particle = null;
+                return -1;
+            }
+            
+            var index = _freeIndices.Pop();
+            ref var p = ref _particles.Span[index];
+            p.IsActive = true;
+            _activeCount++;
+            particle = p;
+            return index;
+        }
+    }
+
+    public ref Particle GetParticleRef(int index) {
+        if (index < 0 || index >= _particles.Length)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        return ref _particles.Span[index];
+    }
+
+    public void Resize(int newSize) {
+        lock(_lock) {
+            if (newSize <= 0) throw new ArgumentException("New size must be greater than 0", nameof(newSize));
+            if (newSize == Size) return;
+
+            var newMemoryOwner = MemoryPool<Particle>.Shared.Rent(newSize);
+            var newParticles = newMemoryOwner.Memory;
+
+            var newSpan = newParticles.Span;
+
+            // Initialize new particles
+            for (var i = 0; i < newSpan.Length; i++) {
+                newSpan[i].Reset();
+                newSpan[i].IsActive = false;
+                _freeIndices.Push(i);
+            }
+
+            // Dispose old memory
+            _memoryOwner.Dispose();
+            _memoryOwner = newMemoryOwner;
+            _particles = newParticles;
+            _activeCount = 0;
+        }
+    }
+
+    public void Return(int index) {
+        lock(_lock) {
+            if (index < 0 || index >= _particles.Length)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            ref var p = ref _particles.Span[index];
+            if (!p.IsActive) return;
+
+            p.Reset();
+            p.IsActive = false;
+            _freeIndices.Push(index);
+            _activeCount--;
+        }
+    }
 
     public void Dispose() {
         if (_isDisposed) return;
@@ -241,6 +264,7 @@ internal class ParticlePool {
         _isDisposed = true;
     }
 }
+
 
 internal record struct Particle {
     public bool IsNull;
