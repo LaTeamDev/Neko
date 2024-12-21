@@ -48,7 +48,7 @@ public class Game : GameBase {
         Physics.DefaultGravity = Vector2.Zero;
         if (!DevMode)
         {
-            SceneManager.LoadScene(new TiledScene());
+            //SceneManager.LoadScene(new TiledScene());
         }
     }
     public override void Draw() {
