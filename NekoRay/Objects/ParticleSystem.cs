@@ -1,16 +1,38 @@
 ﻿using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Numerics;
+using ZeroElectric.Vinculum.Extensions;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace NekoRay;
 
 public class ParticleSystem : NekoObject {
     private readonly ParticlePool _pool;
-    
-    public ParticleSystem(Texture texture, int poolSize = 1024) {
+
+    public ParticleSystem(Texture texture, RectangleF rect, int poolSize = 1024) {
         _pool = new ParticlePool(poolSize);
+        Texture = texture;
+        if (rect != RectangleF.Empty)
+            Bounds = rect;
+        else {
+            Bounds = new RectangleF(0, 0, Texture.Width, Texture.Height);
+        }
+    }
+
+    public ParticleSystem(int poolSize = 1024) {
+        _pool = new ParticlePool(poolSize);
+        Texture = Texture.Load("textures/_missing_texture.png");
     }
     
+    public ParticleSystem(Texture texture, ZeroElectric.Vinculum.Rectangle rect, int poolSize = 1024) 
+        : this(texture, new RectangleF(rect.x, rect.y, rect.width, rect.y), poolSize) { }
+    
+    public ParticleSystem(Texture texture, int poolSize = 1024) : this(texture, RectangleF.Empty, poolSize) {}
+
+    public Texture Texture { get; set; }
+    public RectangleF Bounds { get; set; } //TODO: add flip book support
+
     private readonly List<int> _activeParticleIndices = new();
 
     public int PoolSize {
@@ -24,30 +46,32 @@ public class ParticleSystem : NekoObject {
 
     public int Count => _activeParticleIndices.Count;
     
-    public Vector3 Direction { get; }
     public Vector3 Position { get; set; }
     public float EmissionRate { get; set; } = 1;
     public float EmitterLifetime { get; set; } = 1;
-    private float _emitterLife = 0f;
+    private float _emitterLife;
+    public Range<float> ParticleLifetime { get; set; } = new (1, 1);
+
+    public Range<float> Size { get; set; } = new (1, 1);
+    
+    public Vector3 Direction { get; set; }
+    public Range<float> Speed { get; set; } = new (1, 1);
     public Vector3 Acceleration { get; set; } = Vector3.Zero;
     public float LinearDamping { get; set; } = 1;
-    public (float min, float max) ParticleLifetime { get; set; } = new (1, 1);
-    public Quaternion Rotation { get; set; } = Quaternion.Identity;
-    public float Size { get; set; } = 1;
-    public (float min, float max) SizeVariation { get; set; } = new (1, 1);
-    public float Speed { get; set; } = 1;
-    public Quaternion Spin { get; set; } = Quaternion.Identity;
-    public (float min, float max) SpinVariation { get; set; } = new (1, 1);
     public Vector3 Spread { get; set; } = Vector3.Zero;
+    
     public float TangentialAcceleration { get; set; } = 0;
+    
+    public Quaternion InitialRotation { get; set; } = Quaternion.Identity;
+    public Range<Quaternion> Spin { get; set; } = new (Quaternion.Identity, Quaternion.Identity);
     public bool RelativeRotation = false;
-    public Color Color = Raylib.WHITE;
+    
+    public RayColor Color = Raylib.WHITE;
+
     public Random Random { get; private set; } = new();
 
     public bool Active { get; private set; } = false;
-
     public bool Paused { get; private set; } = false;
-    
     public bool Stopped { get; private set; } = true;
     
     public void Pause() {
@@ -60,10 +84,22 @@ public class ParticleSystem : NekoObject {
         Stop();
     }
     
+    //TODO: add support for 3d: use mesh/billboard to draw
     public void Draw() {
         foreach (var idx in _activeParticleIndices) {
-            ref var p = ref _pool.GetParticleRef(idx); 
-            Raylib.DrawPixelV(p.Position.ToVector2(), p.Color);
+            ref var p = ref _pool.GetParticleRef(idx);
+            var sizeX = Bounds.Width * p.Size;
+            var sizeY = Bounds.Height * p.Size;
+            Texture.Draw(
+                Bounds.ToRaylib(),
+                new ZeroElectric.Vinculum.Rectangle(
+                    p.Position.X,
+                    p.Position.Y,
+                    sizeX,
+                    sizeY),
+                new Vector2(sizeX/2, sizeY/2),
+                float.RadiansToDegrees(p.Rotation.YawPitchRollAsVector3().Z),
+                p.Color);
         }
     }
     
@@ -106,16 +142,23 @@ public class ParticleSystem : NekoObject {
             return;
         ref var p = ref _pool.GetParticleRef(idx); 
         if (p.IsNull) return;
-        p.Lifetime = ParticleLifetime.min+(ParticleLifetime.max-ParticleLifetime.min)*Random.NextSingle();
+        var lifetime = Random.GetRandomValueInBetween(ParticleLifetime);
+        var speed = Random.GetRandomValueInBetween(Speed);
+        var spin = Spin.Min+(Spin.Max-Spin.Min)*Random.NextSingle();
+        var size =  Random.GetRandomValueInBetween(Size);
+        p.Lifetime = lifetime;
+        p.InitialLifetime = p.Lifetime;
         p.Color = Color;
         p.Position = Position;
-        var direction = Vector3.Transform(Direction, Rotation);
         var spread = new Vector3(
             (Random.NextSingle() - 0.5f) * Spread.X,
             (Random.NextSingle() - 0.5f) * Spread.Y,
             (Random.NextSingle() - 0.5f) * Spread.Z
         );
-        p.Velocity = (direction + spread) * Speed;
+        p.Velocity = Vector3.Normalize(Direction + spread) * speed;
+        p.Rotation = InitialRotation;
+        p.Spin = spin;
+        p.Size = size;
 
         _activeParticleIndices.Add(idx);
     }
@@ -123,11 +166,12 @@ public class ParticleSystem : NekoObject {
     private void UpdateParticle(ref Particle p, float dt) {
         p.Color = Color;
         p.Velocity += Acceleration * dt;
-        //p.Velocity *= MathF.Pow(LinearDamping, dt);
+        p.Velocity *= MathF.Pow(LinearDamping, dt);
+        
         p.Position += p.Velocity*dt;
         p.Lifetime -= dt;
         if (TangentialAcceleration != 0) {
-            var tangent = Vector3.Cross(p.Velocity, Vector3.UnitZ);
+            var tangent = Vector3.Cross(p.Velocity, Vector3.UnitY);
             if (tangent != Vector3.Zero) {
                 tangent = Vector3.Normalize(tangent);
                 p.Velocity += tangent * (TangentialAcceleration * dt);
@@ -270,15 +314,22 @@ internal record struct Particle {
     public bool IsNull;
     public Vector3 Position;
     public Quaternion Rotation;
+    public Quaternion Spin;
     public Vector3 Velocity;
     public RayColor Color;
     public float Lifetime;
+    public float InitialLifetime;
+    public float Size;
     public bool IsActive;
 
-    public void Reset(Vector3 position = default, Quaternion rotation = default, Vector3 velocity = default, RayColor color = default) {
+    public float LifeFactor => Lifetime / InitialLifetime;
+
+    public void Reset(Vector3 position = default, Quaternion rotation = default, Quaternion spin = default, Vector3 velocity = default, RayColor color = default, float size = 0f) {
         Position = position;
         Rotation = rotation;
+        Spin = spin;
         Velocity = velocity;
         Color = color;
+        Size = size;
     }
 }

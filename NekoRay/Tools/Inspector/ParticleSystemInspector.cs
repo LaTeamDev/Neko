@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using ImGuiNET;
+using ZeroElectric.Vinculum.Extensions;
 
 namespace NekoRay.Tools;
 
@@ -27,8 +28,10 @@ public class ParticleSystemInspector : Inspector {
         ImGui.SameLine();
         if (ImGui.Button("Emit")) ps.Emit();
         
+        ImGui.SeparatorText("Emitter");
+        
         var emitterLifetime = ps.EmitterLifetime;
-        if (ImGui.DragFloat("Emitter Lifetime", ref emitterLifetime)) {
+        if (ImGui.DragFloat("Lifetime", ref emitterLifetime)) {
             ps.EmitterLifetime = emitterLifetime;
         }
         
@@ -37,25 +40,72 @@ public class ParticleSystemInspector : Inspector {
             ps.EmissionRate = emissionRate;
         }
         
-        var linearDamping = ps.LinearDamping;
-        if (ImGui.DragFloat("Linear Damping", ref linearDamping)) {
-            ps.LinearDamping = linearDamping;
+        ImGui.SeparatorText("Particle");
+                
+        var particleLifetime = ps.ParticleLifetime;
+        if (ImGui.DragFloatRange2("Lifetime", ref particleLifetime.Min, ref particleLifetime.Max)) {
+            ps.ParticleLifetime = particleLifetime;
         }
+        
+        var direction = ps.Direction;
+        if (ImGui.DragFloat3("Initial Direction", ref direction)) {
+            ps.Direction = direction;
+        }
+                
+        var spread = ps.Spread;
+        if (ImGui.DragFloat3("Spread", ref spread)) {
+            ps.Spread = spread;
+        }
+        
+        var rotation = ps.InitialRotation.YawPitchRollAsVector3();
+        if (ImGui.DragFloat3("Initial Rotation", ref rotation)) {
+            ps.InitialRotation = rotation.YawPitchRollAsQuaternion();
+        }
+        
+        var speed = ps.Speed;
+        if (ImGui.DragFloatRange2("Initial Speed", ref speed.Min, ref speed.Max)) {
+            ps.Speed = speed;
+        }
+        
+        var size = ps.Size;
+        if (ImGui.DragFloatRange2("Initial Size", ref size.Min, ref size.Max, 0.01f)) {
+            ps.Size = size;
+        }
+        
+        ImGui.SeparatorText("Forces");
         
         var acceleration = ps.Acceleration;
         if (ImGui.DragFloat3("Acceleration", ref acceleration)) {
             ps.Acceleration = acceleration;
         }
         
-        var particleLifetime = ps.ParticleLifetime;
-        var paricleLifetimeV = new Vector2(particleLifetime.min, particleLifetime.max);
-        if (ImGui.DragFloat2("Particle Lifetime", ref paricleLifetimeV)) {
-            ps.ParticleLifetime = new(paricleLifetimeV.X, paricleLifetimeV.Y);
+        var spinMin = ps.Spin.Min.YawPitchRollAsVector3();
+        var spinMax = ps.Spin.Max.YawPitchRollAsVector3();
+        if (ImGui.DragFloat3("Spin Min", ref spinMin)) {
+            ps.Spin = ps.Spin with {Min=spinMin.YawPitchRollAsQuaternion()};
         }
+        if (ImGui.DragFloat3("Spin Max", ref spinMax)) {
+            ps.Spin = ps.Spin with {Max=spinMax.YawPitchRollAsQuaternion()};
+        }
+        
+        var linearDamping = ps.LinearDamping;
+        if (ImGui.DragFloat("Linear Damping", ref linearDamping)) {
+            ps.LinearDamping = linearDamping;
+        }
+
+        var tangent = ps.TangentialAcceleration;
+        if (ImGui.DragFloat("Tangential Acceleration", ref tangent)) {
+            ps.TangentialAcceleration = tangent;
+        }
+        
+        ImGui.SeparatorText("Display");
         
         var color = ps.Color.ToVector4();
         if (ImGui.ColorEdit4("Color", ref color)) {
             ps.Color = color.ToColor();
         }
+        
+        var texture = ps.Texture;
+        ImGui.Image((nint) texture.Id, new Vector2(64f, 64f));
     }
 }
