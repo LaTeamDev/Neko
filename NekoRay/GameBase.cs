@@ -54,7 +54,7 @@ public abstract class GameBase {
 
     public virtual void Load(string[] args) {
         new AssemblyFilesystem(GetType().Assembly, GetType().Namespace).Mount();
-        RaylibNekoLibFilesystemCompat.Use();
+        Compat.RaylibNekoLibFilesystem.Use();
         Console.ExecFile("autoexec");
         InitConsoleWindow(CliOptions.Instance.ConsoleOnStart);
     }

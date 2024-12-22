@@ -71,6 +71,7 @@ public static class Bootstrapper {
     
     [DebuggerHidden]
     public static int Start(string[] args) {
+        Compat.RaylibSerilog.Use();
         new AssemblyFilesystem(typeof(Bootstrapper).Assembly).Mount();
         Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
         var gameAttr = typeof(Bootstrapper).Assembly.GetCustomAttribute<DefaultGameIdAttribute>();
@@ -78,7 +79,7 @@ public static class Bootstrapper {
         var parser = new Parser(with => with.HelpWriter = null);
         parser.ParseArguments<CliOptions>(args).WithParsed(opt => CliOptions._instance = opt);
         
-        var gameId = CliOptions.Instance.Game??"default";
+        var gameId = CliOptions.Instance.Game??gameAttr?.GameId??"default";
 
         GameBase game; 
         try {
