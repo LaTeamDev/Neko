@@ -1,18 +1,18 @@
+using SoLoud;
+
 namespace NekoRay; 
 
 public static class Audio {
+
+    public static SoLoud.SoLoud SoLoud;
+    public static SoLoudBackend Backend = SoLoudBackend.Auto;
     public static void Init() {
-        Raylib.InitAudioDevice();
+        if (SoLoud is not null) return;
+        SoLoud = new SoLoud.SoLoud();
+        SoLoud.Init(SoloudFlags.ClipRoundoff, Backend);
     }
 
     public static void Close() {
-        Raylib.CloseAudioDevice();
-    }
-
-    public static bool IsReady => Raylib.IsAudioDeviceReady();
-
-    public static float MasterVolume {
-        get => Raylib.GetMasterVolume();
-        set => Raylib.SetMasterVolume(value);
+        SoLoud.DeInit();
     }
 }
