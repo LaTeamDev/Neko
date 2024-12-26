@@ -10,6 +10,7 @@ public static class Audio {
     public static void Init() {
         if (SoLoud is not null) return;
         SoLoud = new SoLoud.SoLoud();
+        Backend = CliOptions.Instance.AudioBackend;
         SoLoud.Init(SoloudFlags.ClipRoundoff, Backend);
         Log.Information("SoLoud {version} started with {backend} backend, {channels} channels, {samplerate} samplerate", SoLoud.Version, SoLoud.Backend, SoLoud.BackendChannels, SoLoud.BackendSampleRate);
     }
