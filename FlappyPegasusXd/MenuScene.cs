@@ -100,7 +100,7 @@ public class MenuScene : BaseScene {
 
         layout.Calculate();
 
-        using var stream = Files.GetFile("flappy/TownTheme.mp3").GetStream();
+        using var stream = Files.GetFile("TownTheme.mp3").GetStream();
         MenuMusic = WavStream.LoadFromStream(stream);
         Audio.SoLoud.PlayBackground(MenuMusic);
         
