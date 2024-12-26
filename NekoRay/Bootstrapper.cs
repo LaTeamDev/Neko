@@ -76,8 +76,13 @@ public static class Bootstrapper {
         Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
         var gameAttr = typeof(Bootstrapper).Assembly.GetCustomAttribute<DefaultGameIdAttribute>();
         
-        var parser = new Parser(with => with.HelpWriter = null);
-        parser.ParseArguments<CliOptions>(args).WithParsed(opt => CliOptions._instance = opt);
+        var parser = Parser.Default;
+        var success = false;
+        parser.ParseArguments<CliOptions>(args).WithParsed(opt => {
+            CliOptions._instance = opt;
+            success = true;
+        });
+        if (!success) return -1;
         
         var gameId = CliOptions.Instance.Game??gameAttr?.GameId??"default";
 

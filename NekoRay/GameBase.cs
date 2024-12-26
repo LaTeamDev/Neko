@@ -109,7 +109,7 @@ public abstract class GameBase {
         var firaFont = io.Fonts.AddFontFromFilesystemTTF("fonts/Lpix.ttf", 7, cfg);
     }
     public virtual LoopFunction Run(string[] args) {
-        Raylib.InitAudioDevice();
+        Audio.Init();
         rlImGui.SetupUserFonts = SetupImGuiFonts;
         rlImGui.Setup(true, true);
         Load(args);
@@ -138,6 +138,7 @@ public abstract class GameBase {
 
     public virtual void Shutdown() {
         rlImGui.Shutdown();
+        Audio.Close();
     }
 
     public virtual void DrawGui() {
