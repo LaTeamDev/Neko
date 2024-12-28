@@ -1,4 +1,5 @@
 using Box2D;
+using NekoLib.Core;
 using NekoRay;
 using NekoRay.Physics2D;
 
@@ -11,7 +12,6 @@ public class Player : Entity
     public CircleCollider Collider;
     public SpriteRenderer2D Sprite;
     
-    // Controller = new WalkController(this);
     public Player() : base("Player") { }
     
     public override void Initialize()
@@ -28,7 +28,7 @@ public class Player : Entity
         Rigidbody.Type = BodyType.Dynamic;
         // Rigidbody.FixedRotation = true;
         Sprite = this.AddChild("Sprite").AddComponent<SpriteRenderer2D>();
-        // Sprite.Sprite = Data.GetSprite("textures/player/placeholder.png");
+        // Sprite.Sprite = Data.GetSprite("");
 
         base.Initialize();
     }

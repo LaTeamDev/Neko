@@ -35,10 +35,6 @@ public class GameScene : BaseScene {
         ((Camera2D) (BaseCamera.Main)).Zoom = 1280 / BaseCamera.Main.RenderWidth;
     }
     
-    public override void Update()
-    {
-        // Controller?.Update();
-    }
     
     public override void FixedUpdate() {
         base.FixedUpdate();
