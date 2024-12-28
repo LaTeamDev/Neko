@@ -2,7 +2,7 @@
 using NekoLib.Core;
 using NekoRay;
 using NekoRay.Physics2D;
-using NeuroSama.CodeData;
+using NeuroSama.Gameplay;
 using ZeroElectric.Vinculum;
 using Camera2D = NekoRay.Camera2D;
 
@@ -15,7 +15,7 @@ public class GameScene : BaseScene {
         var gameObject = new GameObject("Camera");
         var camera = gameObject.AddComponent<Camera2D>();
         camera.IsMain = true;
-        camera.BackgroundColor = new Color(203, 219, 252, 255);
+        camera.BackgroundColor = new Color(252, 240, 196, 255);
         camera.Zoom = 2f;
         
         var player = new Player();
@@ -23,12 +23,13 @@ public class GameScene : BaseScene {
         base.Initialize();
     }
     
-    // public override void Update()
-    // {
-    // }
+    public override void Update()
+    {
+        // Controller?.Update();
+    }
     
-    // public override void FixedUpdate() {
-    //     base.FixedUpdate();
-    //     _world.Step(Time.FixedDeltaF, 4);
-    // }
+    public override void FixedUpdate() {
+        base.FixedUpdate();
+        _world.Step(Time.FixedDeltaF, 4);
+    }
 }
