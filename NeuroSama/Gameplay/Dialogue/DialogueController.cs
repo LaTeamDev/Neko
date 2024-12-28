@@ -24,10 +24,18 @@ public static class DialogueController {
     public static void AddImage(string name, string? emotion = null, DialoguePosition position = DialoguePosition.Center) {
         DialogueObservable.Notify(new DialogueShowSprite(name, emotion, position));
     }
+    public static void RemoveImage(DialoguePosition position = DialoguePosition.Center) {
+        DialogueObservable.Notify(new DialogueHideSprite(position));
+    }
     
     [ConCommand("dg_image")]
     public static void AddImage(string name, string? emotion = null, string position = "Center") {
         Enum.TryParse(position, true, out DialoguePosition pos);
         AddImage(name, emotion, pos);
+    }
+    [ConCommand("dg_unimage")]
+    public static void RemoveImage(string position = "Center") {
+        Enum.TryParse(position, true, out DialoguePosition pos);
+        RemoveImage(pos);
     }
 }

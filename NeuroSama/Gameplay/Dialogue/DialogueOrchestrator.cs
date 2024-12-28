@@ -179,9 +179,8 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
     public void Next() {
         if (Queue.Count <= 0) return;
         if (NextEvent is DialogueEntry dialog) ShowNextText(dialog);
-        if (NextEvent is DialogueShowSprite showSprite) {
-            ShowSprite(showSprite);
-        }
+        if (NextEvent is DialogueShowSprite showSprite) ShowSprite(showSprite);
+        if (NextEvent is DialogueHideSprite hideSprite) HideSprite(hideSprite);
     }
 
     public void ShowNextText(DialogueEntry dialog) {
@@ -246,6 +245,23 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         };
         renderer.Sprite = sprite;
         SpriteFade(renderer, direction, true);
+    }
+    
+    private void HideSprite(DialogueHideSprite hideSprite) {
+        var spritePos = hideSprite.Position;
+        var renderer = spritePos switch {
+            DialoguePosition.Left => SpriteLeft,
+            DialoguePosition.Center => SpriteCenter,
+            DialoguePosition.Right => SpriteRight,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        var direction = spritePos switch {
+            DialoguePosition.Left => AnimationDirection.Left,
+            DialoguePosition.Center => AnimationDirection.Up,
+            DialoguePosition.Right => AnimationDirection.Right,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        SpriteFade(renderer, direction, false);
     }
     
     private enum AnimationDirection {
