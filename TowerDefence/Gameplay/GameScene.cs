@@ -61,8 +61,8 @@ public class GameScene : BaseScene {
         base.Update();
     }
     
-    public override void FixedUpdate() {
-        base.FixedUpdate();
-        _world.Step(Time.FixedDeltaF, 4);
-    }
+    // public override void FixedUpdate() {
+    //     base.FixedUpdate();
+    //     _world.Step(Time.FixedDeltaF, 4);
+    // }
 }
