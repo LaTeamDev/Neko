@@ -6,6 +6,7 @@ using NekoRay.Easings;
 using NeuroSama.UI;
 using ZeroElectric.Vinculum;
 using Camera2D = NekoRay.Camera2D;
+using Font = NekoRay.Font;
 
 namespace NeuroSama.Gameplay.Dialogue;
 
@@ -16,12 +17,19 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
     public Text CurrentText;
     public Text PrevText;
     public Text NextText;
+    public SpriteRenderer2D SpriteLeft;
+    public SpriteRenderer2D SpriteCenter;
+    public SpriteRenderer2D SpriteRight;
     
     public Queue<DialogueEvent> Queue = new();
     private IDisposable _trackerHandle;
 
     void Awake() {
         var fader = GameObject.AddChild("Fader").AddComponent<Rect>();
+        SpriteLeft = GameObject.AddChild("Sprite Left").AddComponent<SpriteRenderer2D>();
+        SpriteCenter = GameObject.AddChild("Sprite Center").AddComponent<SpriteRenderer2D>();
+        SpriteRight = GameObject.AddChild("Sprite Right").AddComponent<SpriteRenderer2D>();
+        
         var topBox = GameObject.AddChild("Top Box").AddComponent<Rect>();
         var bottomBox = GameObject.AddChild("Bottom Box").AddComponent<Rect>();
         Transform.LocalPosition = new Vector3(-640, -360, 0);
@@ -37,9 +45,9 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         bottomBox.Origin = new Vector2(0, 1f);
         bottomBox.Transform.LocalPosition = new Vector3(0, 720, 0);
         var text = bottomBox.GameObject.AddChild("Text").AddComponent<Text>();
-        var font = NekoRay.Font.Load("fonts/dialogue_font.ttf", 16, 255);
+        var font = Font.Load("fonts/dialogue_font.ttf", 16, 255); //FIXME: this is uncached 
         text.Font = font;
-        text.TextString = "Neuro: 1234 pls help";
+        text.TextString = "%ERRORTEXT%";
         text.Origin = new Vector2(0.5f, 0.5f);
         text.Transform.LocalPosition = new Vector3(640, -64, 0);
         text.Transform.LocalScale = new Vector3(2f);
@@ -63,6 +71,17 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         PrevText.Origin = new Vector2(0.5f, 0.5f);
         PrevText.Transform.LocalPosition = new Vector3(640, -96, 0);
         PrevText.Color = Raylib.WHITE.Fade(0f);
+        
+        SpriteLeft.Sprite = Data.GetSprite("textures/dialogues/neuro neutral.png");
+        SpriteCenter.Sprite = SpriteLeft.Sprite;
+        SpriteRight.Sprite = SpriteLeft.Sprite;
+        SpriteLeft.ProportionallyScaleByWidth(450);
+        SpriteCenter.ProportionallyScaleByWidth(450);
+        SpriteRight.ProportionallyScaleByWidth(450);
+        SpriteLeft.Transform.LocalPosition = new Vector3(256, 467, 0);
+        SpriteCenter.Transform.LocalPosition = new Vector3(640, 467, 0);
+        SpriteRight.Transform.LocalPosition = new Vector3(1024, 467, 0);
+        SpriteLeft.Color = SpriteRight.Color = SpriteCenter.Color = Raylib.WHITE.Fade(0f);
 
         _trackerHandle = DialogueController.DialogueObservable.Subscribe(this);
     }
@@ -71,13 +90,22 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
 
     public void OnError(Exception error) { }
 
-    public void OnNext(DialogueEvent value) {
-        if (value.GetType() != typeof(DialogueNext))
-            Queue.Enqueue(value);
-        else {
-            PrevEvent = Queue.Dequeue();
-            Next();
+    public void OnNext(DialogueEvent? value) {
+        if (value is null) {
+            OnNext();
+            return;
         }
+        if (value.GetType() != typeof(DialogueNext)) {
+            Queue.Enqueue(value);
+            return;
+        }
+        OnNext();
+    }
+
+    public void OnNext() {
+        PrevEvent = Queue.Dequeue();
+        Next();
+        if (NextEvent?.Skip??false) OnNext(); 
     }
 
     private DialogueEvent? PrevEvent;
@@ -107,17 +135,25 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
                 Hide();
                 break;
         }
+
+        if (!IsInDialogue) return;
+        if (Input.IsPressed("next")) OnNext();
     }
 
     private bool _shown;
     private bool _hidden;
 
+    public static bool IsInDialogue { get; private set; }
+
     public IEasing Easing = new EaseInOutCubic();
     public float Time = 0.3f;
     public void Show() {
+        IsInDialogue = true;
         if (NextEvent is DialogueEntry dialog) {
-            CurrentText.TextString = $"{dialog.Name}:{dialog.Text}";
+            CurrentText.TextString = $"{dialog.Name}: {dialog.Text}";
         }
+        Next();
+        
         Ease.To(() => TopBox.Transform.LocalPosition.Y, 
             value => TopBox.Transform.LocalPosition = TopBox.Transform.LocalPosition with {Y =value}, 
             Time,
@@ -142,8 +178,14 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
 
     public void Next() {
         if (Queue.Count <= 0) return;
-        if (NextEvent is not DialogueEntry dialog) return;
-        NextText.TextString = $"{dialog.Name}:{dialog.Text}";
+        if (NextEvent is DialogueEntry dialog) ShowNextText(dialog);
+        if (NextEvent is DialogueShowSprite showSprite) {
+            ShowSprite(showSprite);
+        }
+    }
+
+    public void ShowNextText(DialogueEntry dialog) {
+        NextText.TextString = $"{dialog.Name}: {dialog.Text}";
         Ease.To(() => CurrentText.Transform.LocalPosition.Y, 
             value => CurrentText.Transform.LocalPosition = CurrentText.Transform.LocalPosition with {Y = value}, 
             Time,
@@ -185,10 +227,77 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
                 PrevText.TextString = CurrentText.TextString;
                 CurrentText.TextString = NextText.TextString;
             });
-        
+    }
+
+    public void ShowSprite(DialogueShowSprite showSprite) {
+        var spritePos = showSprite.Position;
+        var sprite = Data.GetSprite($"textures/dialogues/{showSprite.Name} {showSprite.Emotion}.png");
+        var renderer = spritePos switch {
+            DialoguePosition.Left => SpriteLeft,
+            DialoguePosition.Center => SpriteCenter,
+            DialoguePosition.Right => SpriteRight,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        var direction = spritePos switch {
+            DialoguePosition.Left => AnimationDirection.Right,
+            DialoguePosition.Center => AnimationDirection.Down,
+            DialoguePosition.Right => AnimationDirection.Left,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        renderer.Sprite = sprite;
+        SpriteFade(renderer, direction, true);
     }
     
+    private enum AnimationDirection {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
+    public float SpriteFadeOffset = 128f;
+
+    private void SpriteFade(SpriteRenderer2D renderer, AnimationDirection direction, bool show) {
+        if (renderer.GameObject.Active == show) return;
+        switch (direction) {
+            case AnimationDirection.Up:
+                Ease.To(() => renderer.Transform.LocalPosition.Y,
+                    value => renderer.Transform.LocalPosition = renderer.Transform.LocalPosition with {Y = value},
+                    Time,
+                    renderer.Transform.LocalPosition.Y + SpriteFadeOffset).SetEasing(Easing);
+                break;
+            case AnimationDirection.Down:
+                Ease.To(() => renderer.Transform.LocalPosition.Y,
+                    value => renderer.Transform.LocalPosition = renderer.Transform.LocalPosition with {Y = value},
+                    Time,
+                    renderer.Transform.LocalPosition.Y - SpriteFadeOffset).SetEasing(Easing);
+                break;
+            case AnimationDirection.Left:
+                Ease.To(() => renderer.Transform.LocalPosition.X,
+                    value => renderer.Transform.LocalPosition = renderer.Transform.LocalPosition with {X = value},
+                    Time,
+                    renderer.Transform.LocalPosition.X - SpriteFadeOffset).SetEasing(Easing);
+                break;
+            case AnimationDirection.Right:
+                Ease.To(() => renderer.Transform.LocalPosition.X,
+                    value => renderer.Transform.LocalPosition = renderer.Transform.LocalPosition with {X = value},
+                    Time,
+                    renderer.Transform.LocalPosition.X + SpriteFadeOffset).SetEasing(Easing);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
+        }
+        if (show) renderer.GameObject.Active = true;
+        Ease.To(() => (float) renderer.Color.a,
+            value => renderer.Color = renderer.Color with {a = (byte) value},
+            Time,
+            show ? 255 : 0).SetEasing(Easing).After(() => {
+            if (!show) renderer.GameObject.Active = false;
+        });
+}
+    
     public void Hide() {
+        IsInDialogue = false;
         NextText.TextString = "";
         Ease.To(() => TopBox.Transform.LocalPosition.Y, 
             value => TopBox.Transform.LocalPosition = TopBox.Transform.LocalPosition with {Y =value}, 
@@ -210,5 +319,8 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
             value => CurrentText.Color = CurrentText.Color with {a = (byte)value}, 
             Time,
             0).SetEasing(Easing);
+        SpriteFade(SpriteRight, AnimationDirection.Right, false);
+        SpriteFade(SpriteLeft, AnimationDirection.Left, false);
+        SpriteFade(SpriteCenter, AnimationDirection.Up, false);
     }
 }

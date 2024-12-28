@@ -1,5 +1,6 @@
 ﻿namespace NekoRay.Easings;
 
+//TODO: use delegates
 public interface IEasing {
     /// <summary>
     /// Calculates eased t (where t is a linear time from 0 to 1)

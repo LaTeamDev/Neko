@@ -2,13 +2,15 @@
 
 namespace NeuroSama.Gameplay.Dialogue;
 
-public class DialogueShowSprite(Sprite sprite, DialoguePosition position) {
-    public Sprite Sprite = sprite;
+public class DialogueShowSprite(string name, string? emotion = null, DialoguePosition position = DialoguePosition.Center) : DialogueEvent {
+    public string Name = name;
+    public string Emotion = emotion??"neutral";
     public DialoguePosition Position = position;
+    public override bool Skip { get; set; } = true;
 }
 
 public enum DialoguePosition {
     Left,
     Center,
-    Position
+    Right
 }

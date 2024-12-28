@@ -21,8 +21,13 @@ public static class DialogueController {
         DialogueObservable.Notify(new DialogueNext());
     }
     
+    public static void AddImage(string name, string? emotion = null, DialoguePosition position = DialoguePosition.Center) {
+        DialogueObservable.Notify(new DialogueShowSprite(name, emotion, position));
+    }
+    
     [ConCommand("dg_image")]
-    public static void AddImage() {
-        DialogueObservable.Notify(new DialogueNext());
+    public static void AddImage(string name, string? emotion = null, string position = "Center") {
+        Enum.TryParse(position, true, out DialoguePosition pos);
+        AddImage(name, emotion, pos);
     }
 }
