@@ -3,16 +3,26 @@
 namespace NeuroSama.Gameplay.Dialogue;
 
 public static class DialogueController {
-    public static Queue<DialogueEntry> Queue = new();
-    public static bool HasMessages => Queue.Count != 0;
 
-    [ConCommand("dg_add")]
+    public static DialogueTracker DialogueObservable = new();
+
+    [ConCommand("dg_msg")]
+    public static void Add(string name, params string[] text) {
+        Add(name, string.Join(' ', text));
+    }
+    
     public static void Add(string name, string text) {
-        Queue.Enqueue(new DialogueEntry(name, text));
+        var entry = new DialogueEntry(name, text);
+        DialogueObservable.Notify(entry);
     }
     
     [ConCommand("dg_next")]
-    public static DialogueEntry Next() {
-        return Queue.Dequeue();
+    public static void Next() {
+        DialogueObservable.Notify(new DialogueNext());
+    }
+    
+    [ConCommand("dg_image")]
+    public static void AddImage() {
+        DialogueObservable.Notify(new DialogueNext());
     }
 }
