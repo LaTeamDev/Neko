@@ -8,7 +8,10 @@ namespace NeuroSama;
 public class Game : GameBase {
     public override void Load(string[] args) {
         base.Load(args);
-        SceneManager.LoadScene(new MenuScene());
+        if (DevMode) {
+            SceneManager.LoadScene(new GameScene());
+        }
+        SceneManager.LoadScene(new SplashScene(new MenuScene()));
     }
 
     public override void Update() {

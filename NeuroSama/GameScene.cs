@@ -14,6 +14,7 @@ public class GameScene : BaseScene {
         var gameObject = new GameObject("Camera");
         var camera = gameObject.AddComponent<Camera2D>();
         camera.IsMain = true;
+        camera.BackgroundColor = Raylib.WHITE;
 
         var dg = gameObject.AddChild("Dialogue").AddComponent<DialogueOrchestrator>();
 
