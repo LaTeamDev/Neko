@@ -71,5 +71,7 @@ public class Texture : NekoObject {
     public void Draw(Rectangle source, Rectangle dest, Vector2 origin, float rotation, Color color) {
         Raylib.DrawTexturePro(_texture, source, dest, origin, rotation, color);
     }
+    
+    
     //TODO: implement left
 }

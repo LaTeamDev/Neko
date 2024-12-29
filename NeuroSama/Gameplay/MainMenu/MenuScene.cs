@@ -16,12 +16,20 @@ public class MenuScene : BaseScene {
         var gameObject = new GameObject("Camera");
         var camera = gameObject.AddComponent<Camera2D>();
         camera.IsMain = true;
+        camera.BackgroundColor = Raylib.BLACK;
 
         var bg = new GameObject("Background")
             .AddComponent<SpriteRenderer2D>().GameObject
             .AddComponent<MenuBackgroundAnimation>();
         bg.Sprites.Add(Data.GetSprite("textures/menu_alt.png"));
         bg.Sprites.Add(Data.GetSprite("textures/menu.png"));
+        var gradient = new GameObject("Gradient") 
+            .AddComponent<SpriteRenderer2D>();
+        gradient.Sprite = Data.GetSprite("textures/gradient.png");
+        gradient.Width = -475f;
+        gradient.Height = 720f;
+        gradient.Sprite.Texture.Filter = TextureFilter.TEXTURE_FILTER_TRILINEAR;
+        gradient.Sprite.Texture.Wrap = TextureWrap.TEXTURE_WRAP_CLAMP;
 
         var playButton = CreateText("Play Button", "play")
             .GameObject.AddComponent<Button>();
@@ -42,6 +50,12 @@ public class MenuScene : BaseScene {
         var musicStream = WavStream.LoadFromStream(stream);
         _voice = Audio.SoLoud.Play(musicStream);
         _voice.Loop = true;
+        
+        var logo = new GameObject("Logo") 
+            .AddComponent<SpriteRenderer2D>();
+        logo.Sprite = Data.GetSprite("textures/logo_dev.png");
+        logo.Transform.Position = new Vector3(-285f, -243f, 0f);
+        logo.Transform.LocalScale = new Vector3(2f);
         
         base.Initialize();
     }
