@@ -14,8 +14,4 @@
         <ProjectReference Include="..\NekoRay\NekoRay.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="GTweens" Version="4.0.0" />
-    </ItemGroup>
-
 </Project>

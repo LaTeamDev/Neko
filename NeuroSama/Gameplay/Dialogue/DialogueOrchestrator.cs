@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using GTweens.Extensions;
 using NekoLib.Core;
 using NekoRay;
 using NekoRay.Easings;

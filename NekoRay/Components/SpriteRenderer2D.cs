@@ -24,10 +24,20 @@ public class SpriteRenderer2D : Behaviour {
     }
     
     public void ProportionallyScaleByWidth(float width) {
-        Transform.LocalScale = new Vector3(1/(Sprite.Width / width));
+        Transform.LocalScale = new Vector3(width / Sprite.Width);
     }
     
     public void ProportionallyScaleByHeight(float height) {
-        Transform.LocalScale = new Vector3(1/(Sprite.Height / height));
+        Transform.LocalScale = new Vector3(height / Sprite.Height);
+    }
+
+    public float Width {
+        get => (Sprite?.Width ?? 0f)*Transform.LocalScale.X; //FIXME: this does not account for scale, non local scale should be in nekolib
+        set => Transform.LocalScale = Transform.LocalScale with {X = value / Sprite.Width};
+    }
+    
+    public float Height {
+        get => (Sprite?.Height ?? 0f)*Transform.LocalScale.Y; //FIXME: this does not account for scale, non local scale should be in nekolib
+        set => Transform.LocalScale = Transform.LocalScale with {Y = value / Sprite.Height};
     }
 }
