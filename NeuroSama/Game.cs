@@ -2,6 +2,7 @@
 using NekoRay;
 using NekoRay.Easings;
 using NeuroSama.Gameplay.MainMenu;
+using NeuroSama.Gameplay.MiniGame;
 
 namespace NeuroSama;
 
@@ -10,7 +11,8 @@ public class Game : GameBase {
         base.Load(args);
         Preloader.Preload();
         if (DevMode) {
-            SceneManager.LoadScene(new GameScene());
+            SceneManager.LoadScene(new MiniGameScene());
+            return;
         }
         SceneManager.LoadScene(new SplashScene(new MenuScene()));
     }
