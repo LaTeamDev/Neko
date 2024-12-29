@@ -4,15 +4,23 @@ using System.Numerics;
 
 namespace NekoRay.Easings;
 
-public class Ease<T> : Ease where T : ISubtractionOperators<T, T, T>, IMultiplyOperators<T, float, T>, IAdditionOperators<T, T, T> {
+public class Ease {
+    public float TimeMax { get; set; }
+    public float TimeNow { get; set; }
+    
     public float Factor => TimeNow / TimeMax;
     public IEasing Easing = new EaseLinear();
     public Getter GetterFunc;
     public Setter SetterFunc;
-    public T Start;
-    public T End;
     
-    internal Ease(Getter from, Setter setter, float time, T to) {
+    public Action? AfterFunc;
+    
+    private static List<Ease> _list = new();
+    
+    public float Start;
+    public float End;
+    
+    internal Ease(Getter from, Setter setter, float time, float to) {
         TimeMax = time;
         GetterFunc = from;
         SetterFunc = setter;
@@ -20,38 +28,29 @@ public class Ease<T> : Ease where T : ISubtractionOperators<T, T, T>, IMultiplyO
         Start = from();
     }
 
-    public override void Update(float dt) {
+    public void Update(float dt) {
         TimeNow += dt;
         SetterFunc(Start + (End-Start)*Easing.Eval(Factor));
     }
-
-    public Ease<T> SetEasing(IEasing easing) {
+    
+    
+    public Ease SetEasing(IEasing easing) {
         Easing = easing;
         return this;
     }
 
-    public delegate T Getter();
-    public delegate void Setter(T value);
-}
-
-public abstract class Ease {
-    public float TimeMax { get; set; }
-    public float TimeNow { get; set; }
+    public delegate float Getter();
+    public delegate void Setter(float value);
     
-    public Action? AfterFunc;
-    
-    private static List<Ease> _list = new();
-    public static Ease<T> To<T>(Ease<T>.Getter from, Ease<T>.Setter setter, float time, T to)
-        where T : ISubtractionOperators<T, T, T>, IMultiplyOperators<T, float, T>, IAdditionOperators<T, T, T>  {
-        var a = new Ease<T>(from, setter, time, to);
+    public static Ease To(Getter from, Setter setter, float time, float to) {
+        var a = new Ease(from, setter, time, to);
         _list.Add(a);
         return a;
     }
-
-    public abstract void Update(float dt);
-
-    public void After(Action a) {
+    
+    public Ease After(Action a) {
         AfterFunc = a;
+        return this;
     }
 
     public static void UpdateAll(float dt) {
@@ -59,11 +58,24 @@ public abstract class Ease {
         _list.CopyTo(thisFrame);
         foreach (var ease in thisFrame) {
             if (ease.TimeMax < ease.TimeNow) {
-                _list.Remove(ease);
-                ease.AfterFunc?.Invoke();
+                ease.Stop();
                 continue;
             }
             ease.Update(dt);
         }
     }
+
+    public static void Stop(Ease ease) {
+        _list.Remove(ease);
+        ease.SetterFunc(ease.End);
+        ease.AfterFunc?.Invoke();
+    }
+    
+    public static void Cancel(Ease ease) {
+        _list.Remove(ease);
+        ease.SetterFunc(ease.End);
+    }
+
+    public void Stop() => Stop(this);
+    public void Cancel() => Cancel(this);
 }

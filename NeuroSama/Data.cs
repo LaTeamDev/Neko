@@ -22,6 +22,7 @@ public static class Data
     }
 
     public static Texture GetTexture(string path) {
+        path = path.Replace('\\', '/');
         if (_textures.TryGetValue(path, out var texture))
             return texture;
         if (!Files.FileExists(path)) return GetNoTexture();
@@ -30,19 +31,38 @@ public static class Data
     }
 
     public static Font GetFont(string path, string text) {
+        path = path.Replace('\\', '/');
         if (_fonts.TryGetValue(path, out var font))
             return font;
         _fonts[path] = Font.FromLove2d(path, text);
         return _fonts[path];
     }
+    public static Font GetFont(string path) {
+        path = path.Replace('\\', '/');
+        if (_fonts.TryGetValue(path, out var font))
+            return font;
+        _fonts[path] = Font.Load(path);
+        return _fonts[path];
+    }
+    
+    public static Font GetFont(string path, int size, int glyphcount = 255) {
+        path = path.Replace('\\', '/');
+        if (_fonts.TryGetValue(path, out var font))
+            return font;
+        _fonts[path] = Font.Load(path, size, glyphcount);
+        return _fonts[path];
+    }
     
     public static Sprite GetSprite(string path) {
+        path = path.Replace('\\', '/');
         var texture = GetTexture(path);
         var sprite = new Sprite(texture, new Rectangle(0, 0, texture.Width, texture.Height));
         return sprite;
     }
 
     public static Shader GetShader(string pathFs, string? fragVert = null) {
+        pathFs = pathFs.Replace('\\', '/');
+        fragVert = fragVert?.Replace('\\', '/');
         if (_shaders.TryGetValue(pathFs+fragVert, out var shader))
             return shader;
         _shaders[pathFs+fragVert] = Shader.FromFiles(pathFs, fragVert);
