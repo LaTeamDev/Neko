@@ -21,9 +21,10 @@ public class GameScene : BaseScene {
         camera.IsMain = true;
         camera.BackgroundColor = new Color(252, 240, 196, 255);
         camera.Zoom = 2f;
+        // var player = playerAnimation.GameObject.AddComponent<PlayerMove>();
         
-        var player = new Player();
-
+        
+        var pl = gameObject.AddComponent<PlayerController>();
         var dg = gameObject.AddChild("Dialogue").AddComponent<DialogueOrchestrator>();
 
 

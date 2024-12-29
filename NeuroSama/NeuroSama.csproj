@@ -6,16 +6,13 @@
         <Nullable>enable</Nullable>
         <NekoRayProjectId>neuro</NekoRayProjectId>
         <CopyAllData>true</CopyAllData>
+        <PackageId>NeuroSama</PackageId>
     </PropertyGroup>
 
     <Import Project="../NekoRay/game.targets"/>
 
     <ItemGroup>
         <ProjectReference Include="..\NekoRay\NekoRay.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="GTweens" Version="4.0.0" />
     </ItemGroup>
 
 </Project>
