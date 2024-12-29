@@ -8,8 +8,13 @@ public class Texture : NekoObject {
     internal Texture() { }
 
     public static Texture Load(string file) {
-        return new Texture {
-            _texture = Raylib.LoadTexture(file)
+        using var image = Image.Load(file);
+        return FromImage(image);
+    }
+
+    public static Texture FromImage(Image image) {
+        return new Texture() {
+            _texture = Raylib.LoadTextureFromImage(image._image)
         };
     }
 

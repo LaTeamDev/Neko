@@ -35,6 +35,19 @@ public static class Data
         _fonts[path] = Font.FromLove2d(path, text);
         return _fonts[path];
     }
+    public static Font GetFont(string path) {
+        if (_fonts.TryGetValue(path, out var font))
+            return font;
+        _fonts[path] = Font.Load(path);
+        return _fonts[path];
+    }
+    
+    public static Font GetFont(string path, int size, int glyphcount = 255) {
+        if (_fonts.TryGetValue(path, out var font))
+            return font;
+        _fonts[path] = Font.Load(path, size, glyphcount);
+        return _fonts[path];
+    }
     
     public static Sprite GetSprite(string path) {
         var texture = GetTexture(path);

@@ -43,7 +43,7 @@ public static class RaylibNekoLibFilesystem {
             return null;
         }
 
-        var data = (byte*)Marshal.AllocHGlobal(*dataSize).ToPointer();
+        var data = (byte*)Marshal.AllocCoTaskMem(*dataSize).ToPointer();
 
         if (data is null) {
             Log.Error("Failed to allocated memory for reading file {File}", filepath);
