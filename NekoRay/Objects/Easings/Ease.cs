@@ -70,6 +70,14 @@ public class Ease {
         ease.SetterFunc(ease.End);
         ease.AfterFunc?.Invoke();
     }
+
+    public static void CancelAll() {
+        var thisFrame = new Ease[_list.Count];
+        _list.CopyTo(thisFrame);
+        foreach (var ease in thisFrame) {
+            ease.Cancel();
+        }
+    }
     
     public static void Cancel(Ease ease) {
         _list.Remove(ease);

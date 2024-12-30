@@ -14,7 +14,7 @@ public class Game : GameBase {
             SceneManager.LoadScene(new MiniGameScene());
             return;
         }
-        SceneManager.LoadScene(new SplashScene(new MenuScene()));
+        SceneManager.LoadScene(new SplashScene(new MenuScene(), "disclaimer", "credits"));
     }
 
     public override void Update() {

@@ -4,6 +4,7 @@ using NekoLib.Filesystem;
 using NekoLib.Scenes;
 using NekoRay;
 using NekoRay.Tools;
+using NeuroSama.Gameplay.Intro;
 using NeuroSama.UI;
 using SoLoud;
 using ZeroElectric.Vinculum;
@@ -79,7 +80,7 @@ public class MenuScene : BaseScene {
 
     [ConCommand("newgame")]
     public static void Play() {
-        SceneManager.LoadScene(new GameScene());
+        SceneManager.LoadScene(new Intro1Scene());
     }
     
     [ConCommand("options")]

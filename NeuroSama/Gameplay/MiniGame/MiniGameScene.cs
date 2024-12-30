@@ -2,13 +2,16 @@
 using System.Numerics;
 using Box2D;
 using NekoLib.Core;
+using NekoLib.Filesystem;
 using NekoRay;
 using NekoRay.Physics2D;
+using SoLoud;
 
 namespace NeuroSama.Gameplay.MiniGame;
 
 public class MiniGameScene : BaseScene {
     public World World;
+    private Voice _voice;
     public override void Initialize() {
         World = this.CreateWorld(Vector2.Zero);
         var gameObject = new GameObject("Camera");
@@ -41,7 +44,11 @@ public class MiniGameScene : BaseScene {
         CreateCollider(new RectangleF(90f, -57f, 137f/2f, 48f/2f));
         CreateCollider(new RectangleF(0f, -145f, 320f, 64f));
         
-            
+        using var stream = Files.GetFile("sounds/music/neuro2.mp3").GetStream();
+        var musicStream = WavStream.LoadFromStream(stream);
+        _voice = Audio.SoLoud.Play(musicStream);
+        _voice.Loop = true;
+        
         base.Initialize();
     }
 
@@ -56,5 +63,10 @@ public class MiniGameScene : BaseScene {
     public override void FixedUpdate() {
         base.FixedUpdate();
         this.GetWorld().Step(Time.FixedDeltaF, 4);
+    }
+    
+    public override void Dispose() {
+        base.Dispose();
+        _voice.Stop();
     }
 }
