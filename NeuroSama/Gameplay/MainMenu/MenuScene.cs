@@ -46,16 +46,17 @@ public class MenuScene : BaseScene {
         exitButton.GameObject.Transform.Position = new Vector3(-480f, 314f, 0f);
         exitButton.GameObject.AddComponent<QuitButtonAction>();
         playButton.GameObject.AddComponent<PlayButtonAction>();
+        optionsButton.GameObject.Active = false;
         
         using var stream = Files.GetFile("sounds/music/neuro1.mp3").GetStream();
         var musicStream = WavStream.LoadFromStream(stream);
         _voice = Audio.SoLoud.Play(musicStream);
-        _voice.Loop = true;
+        _voice.Loop = true; 
         
         var logo = new GameObject("Logo") 
             .AddComponent<SpriteRenderer2D>();
-        logo.Sprite = Data.GetSprite("textures/logo_dev.png");
-        logo.Transform.Position = new Vector3(-285f, -243f, 0f);
+        logo.Sprite = Data.GetSprite("textures/logo.png");
+        logo.Transform.Position = new Vector3(0, -243f, 0f);
         logo.Transform.LocalScale = new Vector3(2f);
         
         base.Initialize();
@@ -90,6 +91,6 @@ public class MenuScene : BaseScene {
     
     [ConCommand("menu")]
     public static void Leave() {
-        throw new NotImplementedException();
+        SceneManager.LoadScene(new MenuScene());
     }
 }

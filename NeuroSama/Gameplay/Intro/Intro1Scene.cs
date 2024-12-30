@@ -11,7 +11,12 @@ namespace NeuroSama.Gameplay.Intro;
 
 public class Intro1Scene : BaseScene {
     private Voice _voice;
-    protected virtual void SpawnBackground() { }
+
+    protected virtual void SpawnBackground() {
+        var background = new GameObject("background").AddComponent<SpriteRenderer2D>();
+        background.Sprite = Data.GetSprite("textures/splash/memory.png");
+        background.ProportionallyScaleByHeight(720);
+    }
 
     public override void Initialize() {
         var gameObject = new GameObject("Camera");
@@ -38,9 +43,10 @@ public class Intro1Scene : BaseScene {
 
     public virtual void ShowDialogue() {
         DialogueController.Add("Stream", "is on");
-        DialogueController.AddImage("neuro_vtube", "neutral_vedal", DialoguePosition.Center);
+        DialogueController.ToggleBox(false);
+        DialogueController.Fade(0f);
         DialogueController.Add("Neuro", "Vedal.");
-        DialogueController.Add("Vedal", "Huh?");
+        DialogueController.Add("Vedal", "huh?");
         DialogueController.Add("Neuro", "Did i ever had...");
         DialogueController.Add("Neuro", "... a childhood?");
         DialogueController.RemoveImage(DialoguePosition.Center);

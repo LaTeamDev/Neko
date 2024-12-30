@@ -1,5 +1,6 @@
 ﻿using NekoLib.Scenes;
 using NekoRay.Tools;
+using SoLoud;
 
 namespace NeuroSama.Gameplay.Dialogue;
 
@@ -46,5 +47,16 @@ public static class DialogueController {
 
     public static void ChangeScene(IScene scene) {
         DialogueObservable.Notify(new DialogueChangeScene(scene));
+    }
+    
+    public static void PlaySound(AudioSource sound) {
+        DialogueObservable.Notify(new DialoguePlaySound(sound));
+    }
+
+    public static void Fade(float f) {
+        DialogueObservable.Notify(new DialogueSetFadeBg(f));
+    }
+    public static void ToggleBox(bool state) {
+        DialogueObservable.Notify(new DialogueToggleUpper(state));
     }
 }

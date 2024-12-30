@@ -14,7 +14,7 @@
         />
     </ItemGroup>
 
-    <Target Name="SetupDirAfterBuild" AfterTargets="Build" Condition="'$(NekoRayProjectId)' != ''">
+    <Target Name="SetupDirAfterBuild" AfterTargets="Build" Condition="false">
         <ItemGroup>
             <_BinItems Include="$(OutDir)\client.*" /> <!--TODO: add support for server-->
         </ItemGroup>

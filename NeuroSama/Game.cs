@@ -12,12 +12,11 @@ public class Game : GameBase {
     public override void Load(string[] args) {
         base.Load(args);
         World.LengthUnitsPerMeter = 64f;
-        Preloader.Preload();
         if (DevMode) {
             SceneManager.LoadScene(new MiniGameScene());
             return;
         }
-        SceneManager.LoadScene(new SplashScene(new MenuScene(), "disclaimer", "credits"));
+        SceneManager.LoadScene(new Preloader(new SplashScene(new MenuScene(), "disclaimer", "credits")));
     }
 
     public override void Update() {

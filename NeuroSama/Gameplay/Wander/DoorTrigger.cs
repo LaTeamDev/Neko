@@ -67,6 +67,17 @@ public class DoorTrigger : Behaviour {
         if (!Input.IsPressed("next")) return;
         DialogueController.AddStub();
         DialogueController.Add("Neuro", "huh?");
+        DialogueController.PlaySound(Data.GetSound("sounds/door.wav"));
+        DialogueController.PlaySound(Data.GetSound("sounds/walk.wav"));
+        DialogueController.Fade(1f);
+        DialogueController.Add("???", "Childhood - is an invisible foundation of world we base our inner self.");
+        DialogueController.Add("???", "Memories of carefree days and first discoveries");
+        DialogueController.Add("???", "become base for forming our values and beliefs.");
+        DialogueController.Add("???", "Every moment, be it joy or sadness leave unstainable spot");
+        DialogueController.Add("???", "which impacts out decisions and relationships");
+        DialogueController.Add("???", "Old telling says");
+        DialogueController.Add("???", "\"Childhood - is a melody, which we humm throughout life.\"");
+        DialogueController.Add("???", "And a good game is a part of this melody.");
         DialogueController.ChangeScene(new SplashScene(new MiniGameScene(), "thegame"));
         //SceneManager.LoadScene(new SplashScene(new MiniGameScene(), "thegame"));
     }

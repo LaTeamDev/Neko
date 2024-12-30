@@ -1,5 +1,6 @@
 ﻿using NekoLib.Filesystem;
 using NekoRay;
+using SoLoud;
 using ZeroElectric.Vinculum;
 using Font = NekoRay.Font;
 using Shader = NekoRay.Shader;
@@ -10,11 +11,12 @@ namespace NeuroSama;
 public static class Data
 {
     private static Dictionary<string, Texture> _textures = new();
+    private static Dictionary<string, Wav> _sounds = new();
     private static Dictionary<string, Font> _fonts = new();
     private static Dictionary<string, Shader> _shaders = new();
 
     public static Texture GetNoTexture() {
-        var path = "textures/notexture.png";
+        var path = "textures/EASTER__EGG.png";
         if (_textures.TryGetValue(path, out var texture))
             return texture;
         _textures[path] = Texture.Load(path);
@@ -67,5 +69,14 @@ public static class Data
             return shader;
         _shaders[pathFs+fragVert] = Shader.FromFiles(pathFs, fragVert);
         return _shaders[pathFs+fragVert];
+    }
+    
+    public static Wav GetSound(string path) {
+        path = path.Replace('\\', '/');
+        if (_sounds.TryGetValue(path, out var texture))
+            return texture;
+        using var stream = Files.GetFile(path).GetStream();
+        _sounds[path] = Wav.LoadFromStream(stream);
+        return _sounds[path];
     }
 }

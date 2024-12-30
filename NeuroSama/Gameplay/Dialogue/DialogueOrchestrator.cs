@@ -47,7 +47,7 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         var text = bottomBox.GameObject.AddChild("Text").AddComponent<Text>();
         var font = Font.Load("fonts/dialogue_font.ttf", 16, 255); //FIXME: this is uncached 
         text.Font = font;
-        text.TextString = "%ERRORTEXT%";
+        text.TextString = "(Press: space, lmb, rmb, e or enter to cont.)";
         text.Origin = new Vector2(0.5f, 0.5f);
         text.Transform.LocalPosition = new Vector3(640, -64, 0);
         text.Transform.LocalScale = new Vector3(2f);
@@ -134,7 +134,7 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         }
 
         if (!IsInDialogue) return;
-        if (Input.IsPressed("next")) OnNext();
+        if (Input.IsPressed("next")||Input.IsPressed("attack")) OnNext();
     }
 
     private bool _shown;
@@ -178,6 +178,25 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         if (NextEvent is DialogueEntry dialog) ShowNextText(dialog);
         if (NextEvent is DialogueShowSprite showSprite) ShowSprite(showSprite);
         if (NextEvent is DialogueHideSprite hideSprite) HideSprite(hideSprite);
+        if (NextEvent is DialoguePlaySound playSound) Audio.SoLoud.Play(playSound.AudioSource);
+        if (NextEvent is DialogueSetFadeBg fadeBg) Ease.To(() => Fader.Color.a,
+            value => Fader.Color = Fader.Color with {a = (byte)value}, 
+            Time,
+            255f*fadeBg.Ammount).SetEasing(Easing);
+        if (NextEvent is DialogueToggleUpper upper) {
+            if (upper.State) {
+                Ease.To(() => TopBox.Transform.LocalPosition.Y, 
+                    value => TopBox.Transform.LocalPosition = TopBox.Transform.LocalPosition with {Y =value}, 
+                    Time,
+                    0).SetEasing(Easing);
+            }
+            else {
+                Ease.To(() => TopBox.Transform.LocalPosition.Y, 
+                    value => TopBox.Transform.LocalPosition = TopBox.Transform.LocalPosition with {Y =value}, 
+                    Time,
+                    -128).SetEasing(Easing);
+            }
+        }
         if (NextEvent is DialogueChangeScene changeScene) {
             Ease.CancelAll();
             SceneManager.LoadScene(changeScene.Scene);
