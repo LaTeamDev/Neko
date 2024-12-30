@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using NekoLib.Core;
+using NekoLib.Scenes;
 using NekoRay;
 using NekoRay.Easings;
 using NeuroSama.UI;
@@ -74,9 +75,6 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         SpriteLeft.Sprite = Data.GetSprite("textures/dialogues/neuro neutral.png");
         SpriteCenter.Sprite = SpriteLeft.Sprite;
         SpriteRight.Sprite = SpriteLeft.Sprite;
-        SpriteLeft.ProportionallyScaleByWidth(450);
-        SpriteCenter.ProportionallyScaleByWidth(450);
-        SpriteRight.ProportionallyScaleByWidth(450);
         SpriteLeft.Transform.LocalPosition = new Vector3(256, 467, 0);
         SpriteCenter.Transform.LocalPosition = new Vector3(640, 467, 0);
         SpriteRight.Transform.LocalPosition = new Vector3(1024, 467, 0);
@@ -180,6 +178,10 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         if (NextEvent is DialogueEntry dialog) ShowNextText(dialog);
         if (NextEvent is DialogueShowSprite showSprite) ShowSprite(showSprite);
         if (NextEvent is DialogueHideSprite hideSprite) HideSprite(hideSprite);
+        if (NextEvent is DialogueChangeScene changeScene) {
+            Ease.CancelAll();
+            SceneManager.LoadScene(changeScene.Scene);
+        };
     }
 
     public void ShowNextText(DialogueEntry dialog) {
@@ -243,6 +245,7 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
             _ => throw new ArgumentOutOfRangeException()
         };
         renderer.Sprite = sprite;
+        renderer.ProportionallyScaleByWidth(450);
         SpriteFade(renderer, direction, true);
     }
     

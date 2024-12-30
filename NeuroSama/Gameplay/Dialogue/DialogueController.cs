@@ -1,4 +1,5 @@
-﻿using NekoRay.Tools;
+﻿using NekoLib.Scenes;
+using NekoRay.Tools;
 
 namespace NeuroSama.Gameplay.Dialogue;
 
@@ -37,5 +38,9 @@ public static class DialogueController {
     public static void RemoveImage(string position = "Center") {
         Enum.TryParse(position, true, out DialoguePosition pos);
         RemoveImage(pos);
+    }
+    
+    public static void ChangeScene(IScene scene) {
+        DialogueObservable.Notify(new DialogueChangeScene(scene));
     }
 }
