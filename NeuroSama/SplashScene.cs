@@ -8,20 +8,25 @@ using Camera2D = NekoRay.Camera2D;
 
 namespace NeuroSama;
 
-public class SplashScene(IScene next) : BaseScene {
+public class SplashScene : BaseScene {
     public Queue<string> Splashes = new();
+
+    public SplashScene(IScene next, params string[] splashes) {
+        foreach (var splash in splashes) {
+            ShowSplash(splash);
+        }
+
+        NextScene = next;
+    }
     
     public override void Initialize() {
         var gameObject = new GameObject("Camera");
         var camera = gameObject.AddComponent<Camera2D>();
         camera.IsMain = true;
-        
-        ShowSplash("disclaimer");
-        ShowSplash("credits");
         base.Initialize();
     }
 
-    public IScene NextScene = next;
+    public IScene NextScene;
     
     private Ease _ease;
 
@@ -39,7 +44,7 @@ public class SplashScene(IScene next) : BaseScene {
             CreateSplash(Splashes.Dequeue());
             return;
         } 
-        SceneManager.LoadScene(next);
+        SceneManager.LoadScene(NextScene);
     }
 
     private IEasing Easing = new EaseLinear();
