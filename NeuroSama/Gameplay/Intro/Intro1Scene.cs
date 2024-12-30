@@ -11,11 +11,15 @@ namespace NeuroSama.Gameplay.Intro;
 
 public class Intro1Scene : BaseScene {
     private Voice _voice;
+    protected virtual void SpawnBackground() { }
+
     public override void Initialize() {
         var gameObject = new GameObject("Camera");
         var camera = gameObject.AddComponent<Camera2D>();
         camera.IsMain = true;
-        camera.BackgroundColor = Raylib.WHITE;
+        camera.BackgroundColor = Raylib.BLACK;
+
+        SpawnBackground();
 
         var dg = gameObject.AddChild("Dialogue").AddComponent<DialogueOrchestrator>();
         

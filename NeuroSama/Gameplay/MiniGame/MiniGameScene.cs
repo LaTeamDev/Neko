@@ -5,6 +5,7 @@ using NekoLib.Core;
 using NekoLib.Filesystem;
 using NekoRay;
 using NekoRay.Physics2D;
+using NeuroSama.Gameplay.Dialogue;
 using SoLoud;
 using ZeroElectric.Vinculum;
 using Camera2D = NekoRay.Camera2D;
@@ -48,12 +49,23 @@ public class MiniGameScene : BaseScene {
         CreateCollider(new RectangleF(90f, -57f, 137f/2f, 48f/2f));
         CreateCollider(new RectangleF(0f, -145f, 320f, 64f));
         
+        //var dg = gameObject.AddChild("Dialogue").AddComponent<DialogueOrchestrator>();
+        
         using var stream = Files.GetFile("sounds/music/neuro2.mp3").GetStream();
         var musicStream = WavStream.LoadFromStream(stream);
         _voice = Audio.SoLoud.Play(musicStream);
         _voice.Loop = true;
         
         base.Initialize();
+    }
+    private bool _dialogueShown = false;
+    public override void Update() {
+        base.Update();
+        if (!_dialogueShown) {
+            _dialogueShown = true;
+            DialogueController.AddStub();
+            DialogueController.Add("Neuro", "What was the first song i sung?");
+        }
     }
 
     private void CreateCollider(RectangleF rect) {

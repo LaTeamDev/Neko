@@ -17,7 +17,7 @@ public class SpriteRenderer2D : Behaviour {
         Matrix4x4.Decompose(Transform.GlobalMatrix, out var scale, out _, out _);
         var position = new Vector2(Transform.Position.X, Transform.Position.Y);
         var fullscale = new Vector2(scale.X * (FlipX ? -1 : 1), scale.Y * (FlipY ? -1 : 1));
-        var origin = new Vector2(Sprite.Width * Origin.X * fullscale.X, Sprite.Height * Origin.Y * fullscale.Y);
+        var origin = new Vector2(Sprite.Width * Origin.X * scale.X, Sprite.Height * Origin.Y * scale.Y);
         var rotation = float.RadiansToDegrees(Transform.Rotation.YawPitchRollAsVector3().Z);
         using (BlendMode.Attach()) {
             using (Shader?.Attach()) {

@@ -53,6 +53,8 @@ public class Ease {
         return this;
     }
 
+    public bool Finished = false;
+
     public static void UpdateAll(float dt) {
         var thisFrame = new Ease[_list.Count];
         _list.CopyTo(thisFrame);
@@ -66,8 +68,7 @@ public class Ease {
     }
 
     public static void Stop(Ease ease) {
-        _list.Remove(ease);
-        ease.SetterFunc(ease.End);
+        Cancel(ease);
         ease.AfterFunc?.Invoke();
     }
 
@@ -80,6 +81,8 @@ public class Ease {
     }
     
     public static void Cancel(Ease ease) {
+        if (ease.Finished) return;
+        ease.Finished = true;
         _list.Remove(ease);
         ease.SetterFunc(ease.End);
     }

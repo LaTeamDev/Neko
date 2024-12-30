@@ -39,7 +39,11 @@ public static class DialogueController {
         Enum.TryParse(position, true, out DialoguePosition pos);
         RemoveImage(pos);
     }
-    
+
+    public static void AddStub() {
+        DialogueObservable.Notify(new DialogueStub());
+    }
+
     public static void ChangeScene(IScene scene) {
         DialogueObservable.Notify(new DialogueChangeScene(scene));
     }
