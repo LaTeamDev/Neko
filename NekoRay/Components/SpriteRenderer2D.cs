@@ -10,6 +10,7 @@ public class SpriteRenderer2D : Behaviour {
     public bool FlipX;
     public bool FlipY;
     public Shader? Shader;
+    public BlendMode BlendMode = BlendMode.BLEND_ALPHA;
 
     void Render() {
         if (Sprite is null) return;
@@ -18,8 +19,10 @@ public class SpriteRenderer2D : Behaviour {
         var fullscale = new Vector2(scale.X * (FlipX ? -1 : 1), scale.Y * (FlipY ? -1 : 1));
         var origin = new Vector2(Sprite.Width * Origin.X * fullscale.X, Sprite.Height * Origin.Y * fullscale.Y);
         var rotation = float.RadiansToDegrees(Transform.Rotation.YawPitchRollAsVector3().Z);
-        using (Shader?.Attach()) {
-            Sprite.Draw(position, fullscale, origin, rotation, Color);
+        using (BlendMode.Attach()) {
+            using (Shader?.Attach()) {
+                Sprite.Draw(position, fullscale, origin, rotation, Color);
+            }
         }
     }
     

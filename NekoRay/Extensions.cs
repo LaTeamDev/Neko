@@ -75,4 +75,17 @@ public static class Extensions {
     
     public static Quaternion YawPitchRollAsQuaternion(this Vector3 rotation) =>
         Quaternion.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z);
+
+
+    private static Stack<BlendMode> _blendModes = new();
+    public static AttachMode Attach(this BlendMode blendMode) {
+        Raylib.BeginBlendMode(blendMode);
+        _blendModes.Push(blendMode);
+        return new AttachMode(()=> {
+            Raylib.EndBlendMode();
+            _blendModes.Pop();
+            if (_blendModes.TryPeek(out var prev))
+                Raylib.BeginBlendMode(prev);
+        });
+    }
 }

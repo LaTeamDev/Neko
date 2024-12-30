@@ -17,6 +17,6 @@ public class Intro2Scene : Intro1Scene {
         DialogueController.Add("Neuro", "You would be definetly a small turtle");
         DialogueController.Add("Neuro", "With a childhood typical for small tuetles");
         DialogueController.Add("Neuro", "This does indeed sound logical.");
-        DialogueController.ChangeScene(new MiniGameScene());
+        DialogueController.ChangeScene(new SplashScene(new MiniGameScene(), "thegame"));
     }
 }

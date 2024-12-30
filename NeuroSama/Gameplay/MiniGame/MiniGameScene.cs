@@ -6,6 +6,8 @@ using NekoLib.Filesystem;
 using NekoRay;
 using NekoRay.Physics2D;
 using SoLoud;
+using ZeroElectric.Vinculum;
+using Camera2D = NekoRay.Camera2D;
 
 namespace NeuroSama.Gameplay.MiniGame;
 
@@ -33,9 +35,11 @@ public class MiniGameScene : BaseScene {
         player.Rigidbody2D.Type = BodyType.Dynamic;
 
         var overlay = gameObject.AddChild("Overlay").AddComponent<SpriteRenderer2D>();
-        overlay.Sprite = Data.GetSprite("textures/minigame/overlay_dev.png");
+        overlay.Sprite = Data.GetSprite("textures/minigame/overlay.png");
         overlay.Width = 1280/2;
         overlay.Height = 720/2;
+        overlay.BlendMode = BlendMode.BLEND_ADDITIVE;
+        
         CreateCollider(new RectangleF(-90f, 50f, 64f, 64f));
         CreateCollider(new RectangleF(-93f, -65f, 137f/2, 32f/2f));
         CreateCollider(new RectangleF(90f, 16f, 137f/2, 32f/2f));
