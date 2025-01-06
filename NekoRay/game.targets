@@ -14,7 +14,7 @@
         />
     </ItemGroup>
 
-    <Target Name="SetupDirAfterBuild" AfterTargets="Build" Condition="false">
+    <Target Name="SetupDirAfterBuild" AfterTargets="Build" Condition="'$(NekoRayProjectId)' != '' And '$(SkipCopy)' != 'true'">
         <ItemGroup>
             <_BinItems Include="$(OutDir)\client.*" /> <!--TODO: add support for server-->
         </ItemGroup>

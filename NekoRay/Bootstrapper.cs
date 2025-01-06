@@ -95,7 +95,7 @@ public static class Bootstrapper {
             Raylib.SetWindowState(WindowSettings.Instance.GetFlags());
             Raylib.InitWindow(WindowSettings.Instance.Width, WindowSettings.Instance.Height, conf.Name);
         }
-        catch (Exception e) {
+        catch (Exception e) when (!Debugger.IsAttached) {
             Console.WriteLine("Abort loading game due to {0}", e);
             game = new NoGame();
             game.Initlogging();
@@ -103,7 +103,7 @@ public static class Bootstrapper {
         }
         Raylib.SetExitKey(0);
 
-        NekoRay.Tools.Console.Init();
+        Tools.Console.Init();
        
         try {
             var loopFunction = game.Run(args);

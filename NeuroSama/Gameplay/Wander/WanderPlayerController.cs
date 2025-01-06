@@ -13,23 +13,18 @@ namespace NeuroSama.Gameplay.Wander;
 public class WanderPlayerController : Behaviour
 {
     public Rigidbody2D rb;
-    private List<Sprite> WalkSprites = new();
+    private AnimDef WalkSprites;
     private SpriteRenderer2D Renderer2D;
     private int _frame;
     private float _frametime;
     [Range(0.01f, 1f)]
-    public float AnimationSpeed = 0.1f;
     private Sprite StandSprite;
 
     void Awake() {
         Renderer2D = GameObject.AddChild("Sprite").AddComponent<SpriteRenderer2D>();
-        foreach (var file in Files.ListFiles("textures/characters/neuro")) {
-            if (Path.GetFileName(file).StartsWith("walk"))
-                WalkSprites.Add(Data.GetSprite(file));
-        }
-
+        WalkSprites = AnimDef.FromFile("textures/characters/neuro/walkanim.toml");
         StandSprite = Data.GetSprite("textures/characters/neuro/stand.png");
-        Renderer2D.Sprite = WalkSprites[_frame];
+        Renderer2D.Sprite = WalkSprites.FramesSprites[_frame];
         Renderer2D.ProportionallyScaleByWidth(486);
         Renderer2D.Transform.LocalPosition = new Vector3(0, -44f, 0);
         Renderer2D.Color = new Color(200, 200, 200, 255);
@@ -58,15 +53,15 @@ public class WanderPlayerController : Behaviour
             Renderer2D.Sprite = StandSprite;
             return;
         };
-        if (WalkSprites.Count < 1) return;
+        if (WalkSprites.FramesSprites.Count < 1) return;
         _frametime += Time.DeltaF;
-        while (_frametime > AnimationSpeed) {
-            _frametime -= AnimationSpeed;
+        while (_frametime > WalkSprites.AnimationSpeed) {
+            _frametime -= WalkSprites.AnimationSpeed;
             _frame++;
-            if (_frame >= WalkSprites.Count) _frame = 0;
+            if (_frame >= WalkSprites.FramesSprites.Count) _frame = 0;
         }
 
-        Renderer2D.Sprite = WalkSprites[_frame];
+        Renderer2D.Sprite = WalkSprites.FramesSprites[_frame];
     }
 
     public void Update() {
