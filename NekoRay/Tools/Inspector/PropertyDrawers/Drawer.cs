@@ -7,7 +7,7 @@ namespace NekoRay.Tools;
 
 public abstract class Drawer {
     public virtual void DrawGui(MemberInfo info, object? obj) {
-        var header = info.GetCustomAttribute<SeparatorAttribute>();
+        var header = info.GetCustomAttribute<GroupAttribute>();
         if (header is not null) ImGui.SeparatorText(header.Text);
     }
     

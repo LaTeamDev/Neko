@@ -12,12 +12,13 @@ namespace NeuroSama.Gameplay.Wander;
 
 public class WanderPlayerController : Behaviour
 {
+    [Inline]
     public Rigidbody2D rb;
     private AnimDef WalkSprites;
     private SpriteRenderer2D Renderer2D;
     private int _frame;
     private float _frametime;
-    [Range(0.01f, 1f)]
+    [Show]
     private Sprite StandSprite;
 
     void Awake() {
@@ -32,8 +33,8 @@ public class WanderPlayerController : Behaviour
     
     [Range(0.01f, 0.5f)] public float DampingSize = 0.05f;
     
-    [ShowInInspector] private float _inputDirection;
-    [ShowInInspector] private float _normalizedInput;
+    [Show] private float _inputDirection;
+    [Show] private float _normalizedInput;
     private float _dampingVelocity;
     
     void UpdateInputDirection() {

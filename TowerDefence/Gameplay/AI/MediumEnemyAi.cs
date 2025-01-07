@@ -26,7 +26,7 @@ public class MediumEnemyAi : SmallEnemyAi {
         }
     }
 
-    [ShowInInspector]
+    [Show]
     private bool _attacked = false;
 
     public float StaggerTime = 0.25f;

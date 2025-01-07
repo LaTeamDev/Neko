@@ -12,7 +12,7 @@ public class Animator2D : Behaviour {
     public float AnimationSpeed = 1f;
     public int CurrentAnimationIndex = 0;
     public SpriteRenderer2D SpriteRenderer;
-    [ShowInInspector]
+    [Show]
     private float _animationTime;
     public Animation? CurrentAnimation {
         get {

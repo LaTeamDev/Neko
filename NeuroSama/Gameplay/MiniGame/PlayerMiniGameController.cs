@@ -14,8 +14,8 @@ public class PlayerMiniGameController : Behaviour {
     
     [Range(0.01f, 1f)] public float DampingSize = 0.15f;
 
-    [ShowInInspector] private Vector2 _inputDirection;
-    [ShowInInspector] private Vector2 _normalizedInput;
+    [Show] private Vector2 _inputDirection;
+    [Show] private Vector2 _normalizedInput;
     private Vector2 _dampingVelocity;
     
     void UpdateInputDirection() {
@@ -31,7 +31,7 @@ public class PlayerMiniGameController : Behaviour {
         _normalizedInput = NekoMath.Damp(_normalizedInput, currentNormalizedInput, ref _dampingVelocity, DampingSize);
     }
 
-    [ShowInInspector] public float DirectionAngle => MathF.Atan2(_normalizedInput.X,-_normalizedInput.Y);
+    [Show] public float DirectionAngle => MathF.Atan2(_normalizedInput.X,-_normalizedInput.Y);
 
     void Update() {
         UpdateInputDirection();

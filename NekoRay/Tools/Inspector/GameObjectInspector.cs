@@ -27,11 +27,16 @@ public class GameObjectInspector : Inspector {
             var iconAttribute = (ToolsIconAttribute?)component.GetType().GetCustomAttribute(typeof(ToolsIconAttribute));
             var icon = iconAttribute?.Icon;
             if (ImGui.CollapsingHeader((icon??MaterialIcons.Insert_drive_file)+ component.GetType().Name+"##"+component.Id)) {
+                ImGui.PushID(component.Id.ToString());
                 ImGui.TextDisabled($"ID:{component.Id}");
+                if (component is Behaviour behaviour) {
+                    var enabled = behaviour.Enabled;
+                    if (ImGui.Checkbox("Enabled", ref enabled))
+                        behaviour.Enabled = enabled;
+                }
                 if (!__cache.TryGetValue(component.Id, out var inspector)) {
                     __cache[component.Id] = inspector = GetInspectorFor(component);
                 }
-                ImGui.PushID(component.Id.ToString());
                 inspector?.DrawGui();
                 ImGui.PopID();
             }

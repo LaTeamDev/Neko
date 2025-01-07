@@ -9,7 +9,7 @@ using Camera2D = NekoRay.Camera2D;
 
 namespace TowerDefence.Gameplay;
 public class DebugScene : BaseScene {
-    [ShowInInspector]
+    [Show]
     private World _world;
     public override void Initialize() {
         _world = this.CreateWorld();

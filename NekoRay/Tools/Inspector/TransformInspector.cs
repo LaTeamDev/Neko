@@ -11,15 +11,24 @@ public class TransformInspector : Inspector {
     public override void DrawGui() {
         var target = (NekoLib.Core.Transform) Target;
         var pos = target.LocalPosition;
-        ImGui.DragFloat3("Position", ref pos);
-        if (pos != target.LocalPosition) target.LocalPosition = pos;
+        if (ImGui.DragFloat3("Position", ref pos))
+            if (pos != target.LocalPosition) target.LocalPosition = pos;
         var scale = target.LocalScale;
         if (ImGui.DragFloat3("Scale", ref scale))
-        if (scale != target.LocalScale) target.LocalScale = scale;
+            if (scale != target.LocalScale) target.LocalScale = scale;
         var rot = target.LocalRotation;
         var rotvec = rot.GetEulerAngles();
-        if (ImGui.SliderFloat3("Rotation", ref rotvec, -MathF.PI / 2, MathF.PI / 2)) {
-            rot = Quaternion.CreateFromYawPitchRoll(rotvec.X, rotvec.Y, rotvec.Z);
+        var rotPretty = new Vector3(
+            float.RadiansToDegrees(rotvec.X),
+            float.RadiansToDegrees(rotvec.Y),
+            float.RadiansToDegrees(rotvec.Z)
+        );
+        if (ImGui.SliderFloat3("Rotation", ref rotPretty, 0, 360f)) {
+            rot = Quaternion.CreateFromYawPitchRoll(
+                float.RadiansToDegrees(rotvec.X), 
+                float.RadiansToDegrees(rotvec.Y), 
+                float.RadiansToDegrees(rotvec.Z)
+                );
             target.LocalRotation = rot;
         }
     }

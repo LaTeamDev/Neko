@@ -71,19 +71,11 @@ public abstract class GameBase {
     }
 
     public event Action? WindowResize;
-    public event Action<KeyboardKey, bool>? KeyPressed;
 
     public virtual void UpdateEvents() {
         if (Raylib.IsWindowResized()) {
             WindowResize?.Invoke();
             SceneManager.InvokeScene("OnWindowResize");
-        }
-        foreach (var key in Enum.GetValues<KeyboardKey>()) {
-            var keyPressed = Raylib.IsKeyPressed(key);
-            var keyPressedRepeat = Raylib.IsKeyPressedRepeat(key);
-            if (keyPressed || keyPressedRepeat) {
-                KeyPressed?.Invoke(key, keyPressedRepeat);
-            }
         }
     }
     public virtual void Update() {

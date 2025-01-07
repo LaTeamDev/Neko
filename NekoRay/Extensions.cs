@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Box2D.Interop;
@@ -87,5 +88,21 @@ public static class Extensions {
             if (_blendModes.TryPeek(out var prev))
                 Raylib.BeginBlendMode(prev);
         });
+    }
+    
+    public static Type? GetUnderlyingType(this MemberInfo member)
+    {
+        switch (member.MemberType)
+        {
+            case MemberTypes.Event:
+                return ((EventInfo)member).EventHandlerType;
+            case MemberTypes.Field:
+                return ((FieldInfo)member).FieldType;
+            case MemberTypes.Method:
+                return ((MethodInfo)member).ReturnType;
+            case MemberTypes.Property:
+                return ((PropertyInfo)member).PropertyType;
+        }
+        return null;
     }
 }

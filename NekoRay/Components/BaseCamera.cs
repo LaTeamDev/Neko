@@ -23,7 +23,7 @@ public abstract class BaseCamera : Behaviour {
         }
     }
     
-    [HideInInspector]
+    [Hide]
     public RenderTexture? RenderTexture;
 
     public BaseCamera() {

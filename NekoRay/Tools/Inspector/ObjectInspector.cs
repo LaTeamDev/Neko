@@ -16,7 +16,7 @@ public class ObjectInspector : Inspector {
         base.Initialize();
         //TODO: support attributes on getters and setters
         Members = TargetType.GetMembers(flags).Where(info => {
-            if (Attribute.IsDefined(info, typeof(HideInInspectorAttribute))) return false;
+            if (Attribute.IsDefined(info, typeof(HideAttribute))) return false;
             var isPublic = info.MemberType switch
             {
                 MemberTypes.Field => ((FieldInfo)info).IsPublic,
@@ -25,11 +25,12 @@ public class ObjectInspector : Inspector {
                 MemberTypes.Method => ((MethodInfo)info).IsPublic,
                 _ => false
             };
-            return isPublic || Attribute.IsDefined(info, typeof(ShowInInspectorAttribute));
-        }).ToArray();
+            return (isPublic || Attribute.IsDefined(info, typeof(ShowAttribute)))
+                   && !Attribute.IsDefined(info, typeof(HideAttribute));
+        }).ToList();
     }
 
-    public MemberInfo[] Members;
+    public List<MemberInfo> Members;
 
     public virtual void RenderMember(MemberInfo memberInfo) {
         //ImGui.Text(memberInfo.Name);
@@ -64,7 +65,10 @@ public class ObjectInspector : Inspector {
 
     public override void DrawGui() {
         foreach (var member in Members) {
+            var ro = member.GetCustomAttribute(typeof(ReadOnlyAttribute)) is not null;
+            if (ro) ImGui.BeginDisabled();
             RenderMember(member);
+            if (ro) ImGui.End();
         }
     }
 }
