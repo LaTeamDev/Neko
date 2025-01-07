@@ -10,27 +10,9 @@ namespace NeuroSama;
 
 public static class Data
 {
-    private static Dictionary<string, Texture> _textures = new();
     private static Dictionary<string, Wav> _sounds = new();
     private static Dictionary<string, Font> _fonts = new();
     private static Dictionary<string, Shader> _shaders = new();
-
-    public static Texture GetNoTexture() {
-        var path = "textures/EASTER__EGG.png";
-        if (_textures.TryGetValue(path, out var texture))
-            return texture;
-        _textures[path] = Texture.Load(path);
-        return _textures[path];
-    }
-
-    public static Texture GetTexture(string path) {
-        path = path.Replace('\\', '/');
-        if (_textures.TryGetValue(path, out var texture))
-            return texture;
-        if (!Files.FileExists(path)) return GetNoTexture();
-        _textures[path] = Texture.Load(path);
-        return _textures[path];
-    }
 
     public static Font GetFont(string path, string text) {
         path = path.Replace('\\', '/');
@@ -57,7 +39,7 @@ public static class Data
     
     public static Sprite GetSprite(string path) {
         path = path.Replace('\\', '/');
-        var texture = GetTexture(path);
+        var texture = Texture.Load(path);
         var sprite = new Sprite(texture, new Rectangle(0, 0, texture.Width, texture.Height));
         return sprite;
     }

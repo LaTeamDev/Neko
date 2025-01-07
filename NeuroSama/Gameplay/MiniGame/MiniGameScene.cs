@@ -24,7 +24,7 @@ public class MiniGameScene : BaseScene {
 
         var background = new GameObject("background").AddComponent<SpriteRenderer2D>();
         background.Sprite = Data.GetSprite("textures/minigame/ballpit.png");
-        background.Transform.Position = new Vector3(-1f, -24f, 0f);
+        background.Transform.Position = new Vector3(-1f, -24f, -1f);
 
         var tutel = new GameObject("Tutel").AddComponent<SpriteRenderer2D>();
         tutel.Sprite = Data.GetSprite("textures/minigame/tutel.png");
@@ -34,6 +34,7 @@ public class MiniGameScene : BaseScene {
         player.Collider = playerCollider;
         player.Rigidbody2D = player.GameObject.AddComponent<Rigidbody2D>();
         player.Rigidbody2D.Type = BodyType.Dynamic;
+        player.Rigidbody2D.InterpolationMode = PhysicsInterpolationMode.Interpolate;
 
         CreateSprite(new Vector2(-76, -126), "ballpit_text", false);
         CreateSprite(new Vector2(-76, -107), "question_1");

@@ -32,7 +32,7 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         
         var topBox = GameObject.AddChild("Top Box").AddComponent<Rect>();
         var bottomBox = GameObject.AddChild("Bottom Box").AddComponent<Rect>();
-        Transform.LocalPosition = new Vector3(-640, -360, 0);
+        Transform.LocalPosition = new Vector3(-640, -360, 10f);
         fader.Width = 1280;
         fader.Height = 720;
         fader.Color = Raylib.BLACK.Fade(0.25f);

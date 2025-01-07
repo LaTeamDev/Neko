@@ -24,17 +24,30 @@ public class Camera2D : BaseCamera {
     void Draw() {
         CurrentCamera = this;
         using (RenderTexture.Attach()) {
+            //RlGl.rlEnableDepthTest();
             Raylib.BeginMode2D(_camera);
             Raylib.ClearBackground(BackgroundColor);
-            foreach (var gameObject in GameObject.Scene.GameObjects) {
-                if (gameObject.AllTags.Contains("Skip2D") || 
-                    gameObject.AllTags.Contains("SkipRender")) continue;
+            var gameObjects = new List<GameObject>();
+            gameObjects.AddRange(GameObject.Scene.GameObjects);
+            gameObjects.Sort(Comparison);
+            foreach (var gameObject in gameObjects) {
+                var tags = gameObject.AllTags;
+                if (tags.Contains("Skip2D") || tags.Contains("SkipRender")) continue;
                 gameObject.SendMessage("Render");
             }
             if (DebugDraw.ConvarDraw && GameObject.Scene.TryGetWorld(out var world)) world?.Draw(DebugDraw.Instance);
             Raylib.EndMode2D();
+            //RlGl.rlDisableDepthTest();
         }
         CurrentCamera = null;
+    }
+
+    private int Comparison(GameObject gameObject, GameObject gameObject2) {
+        if (gameObject.Transform.Position.Z > gameObject2.Transform.Position.Z) 
+            return 1;
+        if (gameObject.Transform.Position.Z < gameObject2.Transform.Position.Z) 
+            return -1;
+        return 0;
     }
 
     public override void Dispose() {

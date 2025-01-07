@@ -40,7 +40,7 @@ public class Preloader(IScene next) : IScene {
     public void Update() {
         if (!texturesLoaded) {
             LastLoaded = Textures[idx++];
-            Data.GetTexture(LastLoaded);
+            NekoRay.Texture.Load(LastLoaded);
             if (idx >= Textures.Count) {
                 texturesLoaded = true;
                 idx = 0;

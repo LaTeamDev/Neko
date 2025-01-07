@@ -2,6 +2,7 @@ using ZeroElectric.Vinculum.Extensions;
 
 namespace NekoRay; 
 
+[Obsolete("Use SoLoud instead")]
 public class Wave : NekoObject {
     internal RayWave _wave;
 

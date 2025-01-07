@@ -20,22 +20,35 @@ public static unsafe class RaylibSerilog {
     const string LIBC = "libc.so.6";
     #endif
     [DllImport(LIBC, SetLastError = false, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private unsafe static extern int vsprintf(
+    private static extern unsafe int vsprintf(
         byte* buffer,
         IntPtr format, 
         nint a);
 
+    #if WINDOWS
     [DllImport(LIBC, SetLastError = false, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    private  unsafe static extern int _vscprintf(
-        IntPtr format, 
+    private static extern unsafe int _vscprintf(
+        char* format, 
         nint a);
+    #elif LINUX
+    [DllImport(LIBC, SetLastError = false, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe int vsnprintf(
+        char* a,
+        uint b,
+        char* format, 
+        nint arg);
+    private static unsafe int _vscprintf(char* format, nint argptr)
+    {
+        return vsnprintf(null, 0, format, argptr); 
+    }
+    #endif
 
     private static ILogger Logger = Log.Logger.ForContext("Name", "Raylib");
     
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void RaylibCallback(int msgTypeRaw, nint fmt, nint va0, nint va1, nint va2, nint va3, nint va4, nint va5, nint va6, nint va7, nint va8, nint va9, nint va10, nint va11, nint va12, nint va13, nint va14, nint va15) {
         var fmtString = Marshal.PtrToStringAnsi(fmt);
-        var bufLen = _vscprintf(fmt, va0);
+        var bufLen = _vscprintf((char*)fmt, va0);
         var bufferManaged = new byte[bufLen];
         fixed(byte* buffer = bufferManaged)
             bufLen = vsprintf(buffer, fmt, va0);

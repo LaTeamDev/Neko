@@ -161,9 +161,43 @@ public class Rigidbody2D : Behaviour {
     }
 
     void Update() {
-        Transform.Position = new Vector3(Position.X, Position.Y, Transform.Position.Z);
+        var position = Vector2.Zero;
+        var rotation = 0f;
+        _interpolateTime += Time.DeltaF;
+        switch (InterpolationMode) {
+            case PhysicsInterpolationMode.None:
+                position = Position;
+                rotation = Rotation.Angle;
+                break;
+            case PhysicsInterpolationMode.Interpolate:
+                position = _interpolatedPosition;
+                rotation = _interpolatedRotation;
+                break;
+            case PhysicsInterpolationMode.Extrapolate:
+                position = _extrapolatedPosition;
+                rotation = _extrapolatedRotation;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        Transform.Position = new Vector3(position, Transform.Position.Z);
         var old = Transform.Rotation.YawPitchRollAsVector3(); 
-        Transform.Rotation = Quaternion.CreateFromYawPitchRoll(old.X, old.Y, Rotation.Angle);
+        Transform.Rotation = Quaternion.CreateFromYawPitchRoll(old.X, old.Y, rotation);
+    }
+
+    public PhysicsInterpolationMode InterpolationMode = PhysicsInterpolationMode.None;
+    private Vector2 _interpolatedPosition => _prevPosition+(Position-_prevPosition)*_interpolateFactor;
+    private Vector2 _extrapolatedPosition => Position+(_prevPosition-Position)*_interpolateFactor;
+    private Vector2 _prevPosition;
+    private float _interpolatedRotation=> _prevRotation+(Rotation.Angle-_prevRotation)*_interpolateFactor;
+    private float _extrapolatedRotation => Rotation.Angle+(_prevRotation-Rotation.Angle)*_interpolateFactor;
+    private float _prevRotation;
+    private float _interpolateFactor => _interpolateTime/Time.FixedDeltaF;
+    private float _interpolateTime;
+    void FixedUpdate() {
+        _interpolateTime = 0;
+        _prevPosition = Transform.Position.ToVector2();
+        _prevRotation  = Transform.Rotation.YawPitchRollAsVector3().Z; 
     }
 
     public override void Dispose() {

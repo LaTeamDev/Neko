@@ -29,17 +29,17 @@ public class WanderScene : BaseScene {
         // var player = playerAnimation.GameObject.AddComponent<PlayerMove>();
         var backgroundbg = new GameObject("backgroundbg").AddComponent<SpriteRenderer2D>();
         backgroundbg.Sprite = Data.GetSprite("textures/location1_bg.png");
-        backgroundbg.Transform.Position = new Vector3(-640f, -24f, 0f);
+        backgroundbg.Transform.Position = new Vector3(-640f, -24f, -2f);
         backgroundbg.ProportionallyScaleByHeight(720);
         backgroundbg.Origin = new Vector2(0, 0.5f);
         var bgbgParallax = backgroundbg.GameObject.AddComponent<Parallax>();
         bgbgParallax.Target = camera.Transform;
         bgbgParallax.Factor = 0.09f;
-        bgbgParallax.Transform.Position = new Vector3(-940f, -24f, 0f);
+        bgbgParallax.Transform.Position = new Vector3(-940f, -24f, -2f);
         
         var background = new GameObject("background").AddComponent<SpriteRenderer2D>();
         background.Sprite = Data.GetSprite("textures/location1_fg.png");
-        background.Transform.Position = new Vector3(-640f, -24f, 0f);
+        background.Transform.Position = new Vector3(-640f, -24f, -1f);
         background.ProportionallyScaleByHeight(720);
         background.Origin = new Vector2(0, 0.5f);
         
@@ -52,6 +52,7 @@ public class WanderScene : BaseScene {
         pl.rb.FixedRotation = true;
         pl.rb.Type = BodyType.Dynamic;
         pl.Transform.Position = new Vector3(0, 86f, 0);
+        pl.rb.InterpolationMode = PhysicsInterpolationMode.Interpolate;
         var follower = camera.GameObject.AddComponent<CameraFollow>();
         follower.FollowTarget = pl.Transform;
         follower.LimitMax = 2906;

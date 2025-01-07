@@ -1,4 +1,6 @@
 using System.Numerics;
+using NekoLib.Filesystem;
+using NekoRay.Tools;
 using ZeroElectric.Vinculum.Extensions;
 
 namespace NekoRay; 
@@ -7,15 +9,57 @@ public class Texture : NekoObject {
     internal RayTexture _texture;
     internal Texture() { }
 
-    public static Texture Load(string file) {
-        using var image = Image.Load(file);
-        return FromImage(image);
+    internal static Dictionary<string, Texture> _cache = new();
+
+    [ConCommand("texture_reload_all")]
+    [ConDescription("Reloads all textures from disk")]
+    public static void ReloadTextures() {
+        foreach (var texture in _cache) {
+            texture.Value.Reload();
+        }
     }
+    
+    [ConCommand("texture_reload")]
+    [ConDescription("Reloads texture from disk")]
+    public static void ReloadTexture(string name) {
+        if (!_cache.TryGetValue(name, out var texture)) throw new ArgumentException("The specified texture was not loaded", nameof(name));
+        texture.Reload();
+    }
+
+    public static Texture NoTexture => Load("textures/__notexture.png");
+    
+    public static Texture Load(string path) {
+        if (_cache.TryGetValue(path, out var texture)) return texture;
+        if (!Files.FileExists(path)) return NoTexture;
+        path = path.Replace('\\', '/');
+        texture = LoadUncached(path);
+        _cache.Add(path, texture);
+        return texture;
+    }
+
+    public static Texture LoadUncached(string file) {
+        using var image = Image.Load(file);
+        var texture = FromImage(image);
+        texture.Path = file;
+        return texture;
+    }
+
+    public string? Path { get; set; }
+    
 
     public static Texture FromImage(Image image) {
         return new Texture() {
             _texture = Raylib.LoadTextureFromImage(image._image)
         };
+    }
+
+    public void Reload() {
+        if (Path is null or "") {
+            throw new FileNotFoundException("Attempt to load texture without a path");
+        }
+        Raylib.UnloadTexture(_texture);
+        using var image = Image.Load(Path);
+        _texture = Raylib.LoadTextureFromImage(image._image);
     }
 
     public bool IsReady => Raylib.IsTextureReady(_texture);
@@ -25,6 +69,7 @@ public class Texture : NekoObject {
 
     public override void Dispose() {
         Raylib.UnloadTexture(_texture);
+        if (Path != null) _cache.Remove(Path);
     }
 
     //TODO: no pointers in public api
