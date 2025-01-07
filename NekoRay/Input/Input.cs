@@ -38,9 +38,10 @@ public sealed class Input {
         Log.Error("Failed to bind {Command} to {Key}", command, key);
     }
     
-    private static Dictionary<KeyboardKey, string> _kbBinds = new();
-    private static Dictionary<MouseButton, string> _mBinds = new();
-    private static Dictionary<GamepadButton, string> _gpBinds = new();
+    private static HashSet<KeyboardBind> _kbBinds = new();
+    private static HashSet<MouseBind> _mBinds = new();
+    private static HashSet<GamepadBind> _gpBinds = new();
+    
     private static Dictionary<string, bool> _down = new();
     private static Dictionary<string, bool> _pressed = new();
     private static Dictionary<string, bool> _released = new();
@@ -50,51 +51,64 @@ public sealed class Input {
     private static List<Tuple<KeyboardKey, string>> _commandList = new();
 
     public static void Bind(KeyboardKey key, string action) {
-        _kbBinds[key] = action;
         _bindList.Add(action);
+        _kbBinds.Add(new KeyboardBind(action, key));
     }
     
     public static void Bind(MouseButton key, string action) {
-        _mBinds[key] = action;
         _bindList.Add(action);
+        _mBinds.Add(new MouseBind(action, key));
     }
     
     public static void Bind(GamepadButton key, string action) {
-        _gpBinds[key] = action;
         _bindList.Add(action);
+        _gpBinds.Add(new GamepadBind(action, key));
     }
     
     public static void BindCommand(KeyboardKey key, string command) {
         _commandList.Add(new Tuple<KeyboardKey, string>(key, command));
     }
 
-    [ConCommand("unbind")]
+    [ConCommand("unbind_action")]
     [ConDescription("Unbind Action")]
     public static void Unbind(string action) {
-        _kbBinds.RemoveByValue(action);
-        _mBinds.RemoveByValue(action);
-        _gpBinds.RemoveByValue(action);
-        _bindList.Remove(action);
+        _kbBinds.RemoveWhere(bind => bind.Name == action);
+        _mBinds.RemoveWhere(bind => bind.Name == action);
+        _gpBinds.RemoveWhere(bind => bind.Name == action);
+    }
+    
+    [ConCommand("unbind_key")]
+    [ConDescription("Unbind key")]
+    public static void Unbind(string key, string action) {
+        if (Enum.TryParse<KeyboardKey>(key, out var kbKey)) {
+            Unbind(kbKey);
+            return;
+        }
+        if (Enum.TryParse<MouseButton>(key, out var mKey)) {
+            Unbind(mKey);
+            return;
+        }
+        if (Enum.TryParse<GamepadButton>(key, out var gpKey)) {
+            Unbind(gpKey);
+            return;
+        }
+        Log.Error("Failed to bind {Action} to {Key}", action, key);
     }
 
     [ConCommand("unbindall")]
     [ConDescription("Unbind all actions")]
     public static void UnbindAll() {
-        foreach (var action in _bindList) {
-            _kbBinds.RemoveByValue(action);
-            _mBinds.RemoveByValue(action);
-            _gpBinds.RemoveByValue(action);
-        }
+        _bindList.Clear();
     }
 
     public static void Unbind(KeyboardKey key) {
-        _kbBinds.Remove(key);
+        _kbBinds.RemoveWhere(bind => bind.Button == key);
     }
     public static void Unbind(MouseButton button) {
-        _mBinds.Remove(button);
+        _mBinds.RemoveWhere(bind => bind.Button == button);
     }
     public static void Unbind(GamepadButton key) {
-        _gpBinds.Remove(key);
+        _gpBinds.RemoveWhere(bind => bind.Button == key);
     }
     
     [ConCommand("unbindcommand")]
@@ -106,28 +120,23 @@ public sealed class Input {
     }
 
     public static bool IsDown(string action) {
-        if (!_down.TryGetValue(action, out var value)) return false;
-        return value;
+        return _down.TryGetValue(action, out var value) && value;
     }
 
     public static bool IsPressed(string action) {
-        if (!_pressed.TryGetValue(action, out var value)) return false;
-        return value;
+        return _pressed.TryGetValue(action, out var value) && value;
     }
 
     public static bool IsReleased(string action) {
-        if (!_released.TryGetValue(action, out var value)) return false;
-        return value;
+        return _released.TryGetValue(action, out var value) && value;
     }
 
     public static bool IsUp(string action) {
-        if (!_up.TryGetValue(action, out var value)) return false;
-        return value;
+        return _up.TryGetValue(action, out var value) && value;
     }
 
     public static bool IsRepeat(string action) {
-        if (!_pressedRepeat.TryGetValue(action, out var value)) return false;
-        return value;
+        return _pressedRepeat.TryGetValue(action, out var value) && value;
     }
 
     internal static Vector2 _lastMousePos;
@@ -138,56 +147,63 @@ public sealed class Input {
     
     internal static void UpdateMouseBinds() {
         foreach (var bind in _mBinds) {
-            _down[bind.Value] |= Raylib.IsMouseButtonDown(bind.Key);
-            _pressed[bind.Value] |= Raylib.IsMouseButtonPressed(bind.Key);
-            _released[bind.Value] |= Raylib.IsMouseButtonReleased(bind.Key);
-            _up[bind.Value] |= Raylib.IsMouseButtonUp(bind.Key);
+            _down[bind.Name] |= bind.Down;
+            _pressed[bind.Name] |= bind.Pressed;
+            _released[bind.Name] |= bind.Released;
+            _up[bind.Name] |= bind.Up;
         }
     }
 
     internal static void UpdateKeyboardBinds() {
         foreach (var bind in _kbBinds) {
-            _down[bind.Value] |= Raylib.IsKeyDown(bind.Key);
-            _pressed[bind.Value] |= Raylib.IsKeyPressed(bind.Key);
-            _released[bind.Value] |= Raylib.IsKeyReleased(bind.Key);
-            _up[bind.Value] |= Raylib.IsKeyUp(bind.Key);
-            _pressedRepeat[bind.Value] |= Raylib.IsKeyPressedRepeat(bind.Key);
+            _down[bind.Name] |= bind.Down;
+            _pressed[bind.Name] |= bind.Pressed;
+            _released[bind.Name] |= bind.Released;
+            _up[bind.Name] |= bind.Up;
+            _pressedRepeat[bind.Name] |= bind.Repeat;
         }
     }
 
     internal static void UpdateGamepadBinds() {
         foreach (var bind in _gpBinds) {
-            _down[bind.Value] |= Raylib.IsGamepadButtonDown(0, bind.Key);
-            _pressed[bind.Value] |= Raylib.IsGamepadButtonPressed(0, bind.Key);
-            _released[bind.Value] |= Raylib.IsGamepadButtonReleased(0, bind.Key);
-            _up[bind.Value] |= Raylib.IsGamepadButtonUp(0, bind.Key);
+            _down[bind.Name] |= bind.Down;
+            _pressed[bind.Name] |= bind.Pressed;
+            _released[bind.Name] |= bind.Released;
+            _up[bind.Name] |= bind.Up;
         }
     }
 
     public static bool ForceUpdate = false;
-
+    
+    public static bool KeyboardLocked { get; private set; }
+    public static bool MouseLocked { get; private set; }
+    public static bool MousePositionLocked { get; private set; }
 
     public static void Update() {
         var io = ImGui.GetIO();
-        foreach (var commandBind in _commandList) {
-            if (Raylib.IsKeyPressed(commandBind.Item1)) Console.Submit(commandBind.Item2);
-        }
+        
+        KeyboardLocked = io.WantCaptureKeyboard && !ForceUpdate;
+        MouseLocked = io.WantCaptureMouse && !ForceUpdate;
+        MousePositionLocked = io.WantCaptureMouse;
         
         foreach (var bind in _bindList) {
             _down[bind] = _pressed[bind] = _released[bind] = _up[bind] = _pressedRepeat[bind] = false;
         }
-        
-        if (!io.WantCaptureKeyboard || ForceUpdate)
-            UpdateKeyboardBinds();
 
-        if (!io.WantCaptureMouse || ForceUpdate) {
+        if (!KeyboardLocked) {
+            foreach (var commandBind in _commandList) {
+                if (commandBind.Item1.IsPressed()) Console.Submit(commandBind.Item2);
+            }
+            UpdateKeyboardBinds();
+        }
+
+        if (!MouseLocked) {
             UpdateMouseBinds();
         }
-        
-        if (!io.WantCaptureMouse)
+        if (!MousePositionLocked)
             MousePosition = Raylib.GetMousePosition();
         
-        if (Raylib.IsGamepadAvailable(0)) return;
-        UpdateGamepadBinds();
+        if (Raylib.IsGamepadAvailable(0))
+            UpdateGamepadBinds();
     }
 }
