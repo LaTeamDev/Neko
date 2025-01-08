@@ -17,40 +17,22 @@ public class Sprite : NekoObject, IAsset {
     }
 
     public string Path { get; private set; } = "";
-    
-    internal static Dictionary<string, Sprite> _cache = new();
-
-    [ConCommand("sprite_reload_all")]
-    [ConDescription("Reloads all sprites from disk")]
-    public static void ReloadTextures() {
-        foreach (var sprite in _cache) {
-            sprite.Value.Reload();
-        }
-    }
-    
-    [ConCommand("sprite_reload")]
-    [ConDescription("Reloads sprite from disk")]
-    public static void ReloadTexture(string name) {
-        if (!_cache.TryGetValue(name, out var sprite)) throw new ArgumentException("The specified texture was not loaded", nameof(name));
-        sprite.Reload();
-    }
 
     public static Sprite NoSprite {
         get {
-            if (_cache.TryGetValue("@__nosprite", out var sprite)) 
+            if (AssetCache.TryGet<Sprite>("@__nosprite", out var sprite)) 
                 return sprite;
             var texture = Texture.NoTexture;
-            return _cache["@__nosprite"] = new Sprite(texture, new Rectangle(0, 0, texture.Width, texture.Height));
+            return AssetCache.Add(new Sprite(texture, new Rectangle(0, 0, texture.Width, texture.Height)));
         }
     }
 
     public static Sprite Load(string path) {
         path = path.Replace('\\', '/');
-        if (_cache.TryGetValue(path, out var sprite)) return sprite;
+        if (AssetCache.TryGet<Sprite>(path, out var sprite)) return sprite;
         if (!Files.FileExists(path)) return NoSprite;
         sprite = LoadUncached(path);
-        _cache.Add(path, sprite);
-        return sprite;
+        return AssetCache.Add(sprite);
     }
 
     public static Sprite LoadUncached(string path) {
@@ -63,7 +45,10 @@ public class Sprite : NekoObject, IAsset {
     }
 
     public void Reload() {
-        
+        var spriteFile = SpriteFile.Load(Path);
+        Texture = Texture.Load(spriteFile.Texture);
+        Bounds = spriteFile.Bounds;
+        Origin = spriteFile.Origin;
     }
     
     public void Draw(Vector2 destination, Vector2? scale = null, float rotation = 0f, Color? color = null) {
@@ -83,5 +68,10 @@ public class Sprite : NekoObject, IAsset {
             new Vector2(Origin.X * Math.Abs(scale.Value.X), Origin.Y * Math.Abs(scale.Value.Y)), 
             rotation, 
             color.Value);
+    }
+
+    public override void Dispose() {
+        base.Dispose();
+        if (Path != null) AssetCache.Remove(this);
     }
 }

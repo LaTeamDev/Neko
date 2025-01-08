@@ -9,32 +9,14 @@ public class Texture : NekoObject, IAsset {
     internal RayTexture _texture;
     internal Texture() { }
 
-    internal static Dictionary<string, Texture> _cache = new();
-
-    [ConCommand("texture_reload_all")]
-    [ConDescription("Reloads all textures from disk")]
-    public static void ReloadTextures() {
-        foreach (var texture in _cache) {
-            texture.Value.Reload();
-        }
-    }
-    
-    [ConCommand("texture_reload")]
-    [ConDescription("Reloads texture from disk")]
-    public static void ReloadTexture(string name) {
-        if (!_cache.TryGetValue(name, out var texture)) throw new ArgumentException("The specified texture was not loaded", nameof(name));
-        texture.Reload();
-    }
-
     public static Texture NoTexture => Load("textures/__notexture.png");
     
     public static Texture Load(string path) {
         path = path.Replace('\\', '/');
-        if (_cache.TryGetValue(path, out var texture)) return texture;
+        if (AssetCache.TryGet<Texture>(path, out var texture)) return texture;
         if (!Files.FileExists(path)) return NoTexture;
         texture = LoadUncached(path);
-        _cache.Add(path, texture);
-        return texture;
+        return AssetCache.Add(texture);
     }
 
     public static Texture LoadUncached(string file) {
@@ -69,7 +51,7 @@ public class Texture : NekoObject, IAsset {
 
     public override void Dispose() {
         Raylib.UnloadTexture(_texture);
-        if (Path != null) _cache.Remove(Path);
+        if (Path != null) AssetCache.Remove(this);
     }
 
     //TODO: no pointers in public api

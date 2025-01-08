@@ -1,0 +1,9 @@
+{
+  "displayName": "Reimu Hakurei",
+  "type": "A",
+  "baseSpeed": 100,
+  "focusedSpeed": 100,
+  "animations": [
+    "animations/characters/reimu/idle.nra"
+  ]
+}
