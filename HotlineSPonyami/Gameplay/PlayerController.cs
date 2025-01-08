@@ -23,6 +23,7 @@ public class PlayerController : Behaviour {
         _backLegRight = AsepriteLoader.Load("textures/entity/player/back_leg_forwad.json").ToAnimation();
         _frontLegRight = AsepriteLoader.Load("textures/entity/player/front_leg_forwad.json").ToAnimation();
         _body = Data.GetSprite("textures/entity/player/body.png");
+        _body.Origin = new Vector2(_body.Width / 2, _body.Height / 2);
     }
 
     void Awake() {
@@ -37,7 +38,6 @@ public class PlayerController : Behaviour {
         _body.Draw(
             Transform.Position.ToVector2(),
             Transform.LocalScale.ToVector2(),
-            new Vector2(_body.Width/2, _body.Height/2),
             float.RadiansToDegrees(Transform.Rotation.GetEulerAngles().Z)
         );
     }

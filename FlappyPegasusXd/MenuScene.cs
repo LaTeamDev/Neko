@@ -70,7 +70,7 @@ public class MenuScene : BaseScene {
         var logo = new GameObject("Logo").AddComponent<SpriteRenderer2D>();
         logo.Sprite = Data.GetSprite("texture/logo.png");
         logo.Transform.Position = new Vector3(240f, -144f + 32f, 0f);
-        logo.Origin = new Vector2(1f, 0f);
+        logo.Sprite.Origin = new Vector2(logo.Sprite.Width, 0f);
 
         var canvas = new GameObject("Canvas");
         canvas.AddComponent<Canvas>();

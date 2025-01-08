@@ -9,23 +9,26 @@ using rlImGui_cs;
 namespace NekoRay.Tools; 
 
 public class GameView : ToolBehaviour {
-    private int _renderWidth;
-    private int _renderHeight;
-    private bool _autoSize = true;
-    private bool _fill = false;
-    private static int _displayWidth;
-    private static int _displayHeight;
+    private static int _renderWidth;
+    private static int _renderHeight;
+    private static bool _autoSize = true;
 
     [ConVariable("r_gameview_width")]
     public static int DisplayWidth {
-        get => _displayWidth;
-        set => _displayWidth = value;
+        get => _renderWidth;
+        set {
+            _autoSize = false;
+            _renderWidth = value;
+        }
     }
 
     [ConVariable("r_gameview_height")]
     public static int DisplayHeight {
-        get => _displayHeight;
-        set => _displayHeight = value;
+        get => _renderHeight;
+        set {
+            _autoSize = false;
+            _renderHeight = value;
+        }
     }
 
     private bool DrawSize(string id, ref int width, ref int height) {
@@ -44,12 +47,14 @@ public class GameView : ToolBehaviour {
         return false;
     }
 
+    private Vector2 _prevWinSize = Vector2.Zero;
     [UsedImplicitly]
     void DrawGui() {
         //TODO: make it use different fill methods
-        _renderWidth = BaseCamera.Main?.RenderWidth ?? -1;
-        _renderHeight = BaseCamera.Main?.RenderHeight ?? -1;
+        _renderWidth = BaseCamera.Main?.RenderWidth ?? DisplayWidth;
+        _renderHeight = BaseCamera.Main?.RenderHeight ?? DisplayHeight;
         if (ImGui.Begin("Game View", ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.HorizontalScrollbar)) {
+            var size = ImGui.GetWindowContentRegionMax()-ImGui.GetWindowContentRegionMin();
             if (ImGui.BeginMenuBar()) {
                 if (ImGui.BeginMenu("Display Settings")) {
                     ImGui.SeparatorText("Render Size");
@@ -61,24 +66,7 @@ public class GameView : ToolBehaviour {
                         _autoSize = false;
                     }
 
-                    if (ImGui.Checkbox("Auto-size", ref _autoSize)) {
-                        if (_autoSize) {
-                            BaseCamera.Main.RenderWidth = -1;
-                            BaseCamera.Main.RenderHeight = -1;
-                            BaseCamera.Main.RecreateRenderTexture();
-                        }
-                        else {
-                            BaseCamera.Main.RenderWidth = _renderWidth;
-                            BaseCamera.Main.RenderHeight = _renderHeight;
-                            BaseCamera.Main.RecreateRenderTexture();
-                        }
-                    }
-                    
-                    ImGui.SeparatorText("Display");
-                    ImGui.Checkbox("Fill", ref _fill);
-                    if (_fill) ImGui.BeginDisabled();
-                    DrawSize("display", ref _displayWidth, ref _displayHeight);
-                    if (_fill) ImGui.EndDisabled();
+                    ImGui.Checkbox("Auto-size", ref _autoSize);
                     
                     ImGui.EndMenu();
                 }
@@ -86,18 +74,22 @@ public class GameView : ToolBehaviour {
                 ImGui.EndMenuBar();
             }
             ImGui.BeginChild("GameRenderer");
-            var aspectRatio = _renderWidth/_renderHeight;
-            Vector2 wsize;
-            if (!_fill) wsize = new Vector2(DisplayWidth, DisplayHeight);
-            else wsize = new Vector2(_renderWidth, _renderHeight);
+            //var aspectRatio = _renderWidth/_renderHeight;
+            var wsize = new Vector2(_renderWidth, _renderHeight);
             var mousePosScalingFactor = _renderWidth / wsize.X;
             var startPos = ImGui.GetCursorScreenPos();
             if (BaseCamera.Main is not null) {
+                if (_autoSize) {
+                    if ((int)size.X != _renderWidth || (int)size.Y != _renderHeight) {
+                        BaseCamera.Main.RenderWidth = (int)size.X;
+                        BaseCamera.Main.RenderHeight = (int)size.Y;
+                        BaseCamera.Main.RecreateRenderTexture();
+                    }
+                }
                 //GraphicsReferences.OpenGl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 //ImGui.Image((nint) Camera.MainCamera.RenderTexture.OpenGlHandle, wsize with {Y = wsize.X/aspectRatio}, new(0, 1), new(1, 0));
-                var w = ImGui.GetWindowWidth();
-                var h = ImGui.GetWindowHeight();
                 //if (w > wsize.X) wsize
+                ImGui.SetCursorPos((size - wsize)/2);
                 ImGui.Image((nint)BaseCamera.Main.RenderTexture.Texture._texture.id,wsize, new(0, 1), new(1, 0));
             }
             //else

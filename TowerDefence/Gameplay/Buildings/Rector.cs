@@ -23,14 +23,13 @@ public class Rector : BaseBuilding
         _rigidbody = AddComponent<Rigidbody2D>();
         _rigidbody.Type = BodyType.Kinematic;
         _rigidbody.FixedRotation = true;
-        
+        _sprite.Origin = new Vector2(_sprite.Width / 2f, _sprite.Height / 2f);
         base.Initialize();
     }
 
     public override void Render()
     {
         base.Render();
-        var origin = new Vector2(_sprite.Width / 2f, _sprite.Height / 2f);
-        _sprite.Draw(Transform.Position.ToVector2(), null, origin, 0);
+        _sprite.Draw(Transform.Position.ToVector2());
     }
 }

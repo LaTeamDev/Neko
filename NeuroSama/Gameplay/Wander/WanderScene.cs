@@ -31,7 +31,7 @@ public class WanderScene : BaseScene {
         backgroundbg.Sprite = Data.GetSprite("textures/location1_bg.png");
         backgroundbg.Transform.Position = new Vector3(-640f, -24f, -2f);
         backgroundbg.ProportionallyScaleByHeight(720);
-        backgroundbg.Origin = new Vector2(0, 0.5f);
+        backgroundbg.Sprite.Origin = new Vector2(0, backgroundbg.Sprite.Height*0.5f);
         var bgbgParallax = backgroundbg.GameObject.AddComponent<Parallax>();
         bgbgParallax.Target = camera.Transform;
         bgbgParallax.Factor = 0.09f;
@@ -41,7 +41,7 @@ public class WanderScene : BaseScene {
         background.Sprite = Data.GetSprite("textures/location1_fg.png");
         background.Transform.Position = new Vector3(-640f, -24f, -1f);
         background.ProportionallyScaleByHeight(720);
-        background.Origin = new Vector2(0, 0.5f);
+        background.Sprite.Origin = new Vector2(0, background.Sprite.Height*0.5f);
         
         
         var pl = new GameObject("Player").AddComponent<WanderPlayerController>();

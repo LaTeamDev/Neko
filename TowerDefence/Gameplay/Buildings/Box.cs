@@ -27,7 +27,7 @@ public class Box : Entity, Usable
         _rigidbody = AddComponent<Rigidbody2D>();
         _rigidbody.Type = BodyType.Kinematic;
         _rigidbody.FixedRotation = true;
-        
+        _sprite.Origin = new Vector2(_sprite.Width / 2f, _sprite.Height / 2f);
         base.Initialize();
     }
 
@@ -50,8 +50,7 @@ public class Box : Entity, Usable
     public override void Render()
     {
         base.Draw();
-        var origin = new Vector2(_sprite.Width / 2f, _sprite.Height / 2f);
-        _sprite.Draw(Transform.Position.ToVector2(), null, origin, 0);
+        _sprite.Draw(Transform.Position.ToVector2(), null, 0);
         //Raylib.DrawRectangleV(Transform.Position.ToVector2() - Vector2.One * size / 2f, Vector2.One * size, new Color(255, 128, 0, 255));
     }
 }

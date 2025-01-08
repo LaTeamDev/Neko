@@ -14,7 +14,7 @@ public class Intro2Scene : Intro1Scene {
         background.Sprite = Data.GetSprite("textures/location1.png");
         background.Transform.Position = new Vector3(-1f, -24f, 0f);
         background.ProportionallyScaleByHeight(720);
-        background.Origin = new Vector2(0, 0.5f);
+        background.Sprite.Origin = new Vector2(0, background.Sprite.Height/2);
         background.Transform.Position = new Vector3(-640f, 0f, 0f);
     }
     

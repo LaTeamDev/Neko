@@ -19,6 +19,7 @@ public class BuildingInventory
             if (_lastSprite == CurrentTemplate?.Texture) return _currentSprite;
             _lastSprite = CurrentTemplate?.Texture;
             _currentSprite = Data.GetSprite(_lastSprite);
+            _currentSprite.Origin = new Vector2(_currentSprite.Width / 2f, _currentSprite.Height / 2f);
             return _currentSprite;
         }
     }
@@ -59,8 +60,7 @@ public class BuildingInventory
     {
         if(CurrentTemplate == null || CurrentSprite == null) return;
         Sprite sprite = CurrentSprite;
-        var origin = new Vector2(sprite.Width / 2f, sprite.Height / 2f);
-        sprite.Draw(position, null, origin, 0, new Color(0, 255, 0, 128));
+        sprite.Draw(position, null, 0, new Color(0, 255, 0, 128));
         //Raylib.DrawRectangleV(position, Vector2.One * 50, Raylib.RAYWHITE);
     }
 }

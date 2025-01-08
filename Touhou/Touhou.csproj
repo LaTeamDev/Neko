@@ -11,6 +11,15 @@
     <ItemGroup>
       <ProjectReference Include="..\NekoRay\NekoRay.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <None Update="th\textures\characters\reimu.qoi">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="th\sprites\characters\reimu\idle.nrs">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
     
     <Import Project="../NekoRay/game.targets" />
 

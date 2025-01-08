@@ -5,7 +5,7 @@ using ZeroElectric.Vinculum.Extensions;
 
 namespace NekoRay; 
 
-public class Texture : NekoObject {
+public class Texture : NekoObject, IAsset {
     internal RayTexture _texture;
     internal Texture() { }
 
@@ -29,9 +29,9 @@ public class Texture : NekoObject {
     public static Texture NoTexture => Load("textures/__notexture.png");
     
     public static Texture Load(string path) {
+        path = path.Replace('\\', '/');
         if (_cache.TryGetValue(path, out var texture)) return texture;
         if (!Files.FileExists(path)) return NoTexture;
-        path = path.Replace('\\', '/');
         texture = LoadUncached(path);
         _cache.Add(path, texture);
         return texture;

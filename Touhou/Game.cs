@@ -1,4 +1,6 @@
-﻿using NekoRay;
+﻿using NekoLib.Scenes;
+using NekoRay;
+using Touhou.Gameplay;
 
 namespace Touhou;
 
@@ -7,6 +9,7 @@ public class Game : GameBase {
         base.Load(args);
         if (DevMode) {
             NekoRay.Tools.Console.ExecFile("autoexec_dev");
+            SceneManager.LoadScene(new TestScene());
             return;
         }
     }

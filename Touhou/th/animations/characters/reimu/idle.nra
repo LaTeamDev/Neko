@@ -1,0 +1,9 @@
+Name: IDLE
+Frames:
+  - Sprite: sprites/characters/reimu/idle.nrs
+    Time: 0.1
+    Rotation: 0
+    Scale: 0
+    Interpolation: false # interpolate stuff like rotation to next sprite
+OverallSpeed: 1
+Loop: true
