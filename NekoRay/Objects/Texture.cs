@@ -12,6 +12,7 @@ public class Texture : NekoObject, IAsset {
     public static Texture NoTexture => Load("textures/__notexture.png");
     
     public static Texture Load(string path) {
+        ThreadSafety.ThrowIfNotMainThread();
         path = path.Replace('\\', '/');
         if (AssetCache.TryGet<Texture>(path, out var texture)) return texture;
         if (!Files.FileExists(path)) return NoTexture;
@@ -20,19 +21,40 @@ public class Texture : NekoObject, IAsset {
     }
 
     public static Texture LoadUncached(string file) {
+        ThreadSafety.ThrowIfNotMainThread();
         using var image = Image.Load(file);
         var texture = FromImage(image);
         texture.Path = file;
         return texture;
     }
 
+    [Obsolete("crashes")]
+    public static async Task<Texture> LoadUncachedAsync(string file) {
+        using var image = await Image.LoadAsync(file);
+        var texture = FromImage(image);
+        texture.Path = file;
+        return texture;
+    }
+
+    [Obsolete("crashes")]
+    public static async Task<Texture> LoadAsync(string path) {
+        path = path.Replace('\\', '/');
+        if (AssetCache.TryGet<Texture>(path, out var texture)) return texture;
+        if (!Files.FileExists(path)) return NoTexture;
+        texture = await LoadUncachedAsync(path);
+        return AssetCache.Add(texture);
+    }
+
+    private static Lock _textureLock = new();
+
     public string? Path { get; set; }
     
 
     public static Texture FromImage(Image image) {
-        return new Texture() {
-            _texture = Raylib.LoadTextureFromImage(image._image)
-        };
+        lock (_textureLock)
+            return new Texture() {
+                _texture = Raylib.LoadTextureFromImage(image._image)
+            };
     }
 
     public void Reload() {
@@ -41,7 +63,21 @@ public class Texture : NekoObject, IAsset {
         }
         Raylib.UnloadTexture(_texture);
         using var image = Image.Load(Path);
-        _texture = Raylib.LoadTextureFromImage(image._image);
+        lock (_textureLock)
+            _texture = Raylib.LoadTextureFromImage(image._image);
+    }
+
+    public async Task ReloadAsync() {
+        if (Path is null or "") {
+            throw new FileNotFoundException("Attempt to load texture without a path");
+        }
+        var prevTexture = _texture;
+        await Task.Run(() => {
+            using var image = Image.Load(Path);
+            lock (_textureLock)
+                _texture = Raylib.LoadTextureFromImage(image._image);
+        });
+        await Task.Run(()=>Raylib.UnloadTexture(prevTexture));
     }
 
     public bool IsReady => Raylib.IsTextureReady(_texture);
@@ -50,13 +86,15 @@ public class Texture : NekoObject, IAsset {
     public int Height => _texture.height;
 
     public override void Dispose() {
-        Raylib.UnloadTexture(_texture);
+        lock (_textureLock)
+            Raylib.UnloadTexture(_texture);
         if (Path != null) AssetCache.Remove(this);
     }
 
     //TODO: no pointers in public api
     public unsafe void Update(void* pixels) {
-        Raylib.UpdateTexture(_texture, pixels);
+        lock (_textureLock)
+            Raylib.UpdateTexture(_texture, pixels);
     }
     
     public unsafe void Update(void* pixels, Rectangle rectangle) {
@@ -65,7 +103,8 @@ public class Texture : NekoObject, IAsset {
 
     public unsafe void GenMipmaps() {
         var pin = _texture.GcPin();
-        Raylib.GenTextureMipmaps((RayTexture*)pin.AddrOfPinnedObject());
+        lock (_textureLock)
+            Raylib.GenTextureMipmaps((RayTexture*)pin.AddrOfPinnedObject());
         pin.Free();
     }
 

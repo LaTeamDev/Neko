@@ -1,12 +1,9 @@
 {
-  "displayName": "Reimu Hakurei",
-  "type": "A",
-  "baseSpeed": 100,
-  "focusedSpeed": 100,
+  "displayName": "Fairy",
   "animations": [
     "animations/characters/reimu/idle.nra"
   ],
-  "powerData": [ //adapted from https://github.com/happyhavoc/th06/blob/master/src/BulletData.cpp
+  "powerData": [
     { //Rank 1
       "numBullets": 1,
       "power": 8,

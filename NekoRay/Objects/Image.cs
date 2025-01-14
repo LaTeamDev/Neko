@@ -3,7 +3,7 @@ using ZeroElectric.Vinculum.Extensions;
 
 namespace NekoRay; 
 
-public class Image : NekoObject {
+public class Image : NekoObject, IAsset {
     internal RayImage _image;
     
     internal Image() { }
@@ -11,10 +11,46 @@ public class Image : NekoObject {
     public int Height => _image.height;
     public int Width => _image.width;
 
-    public static unsafe Image Load(string filename) {
+    public string Path { get; private set; } = "";
+    
+    public void Reload() {
+        throw new NotImplementedException();
+    }
+
+    public static unsafe Image LoadUncached(string filename) {
         var file = Files.GetFile(filename).ReadBinary();
+        Image img;
         fixed (byte* ptr = file) //TODO: investigate is this a valid way to load image (pointer never used again) or it is better to use GCHandle
-            return FromMemory(Path.GetExtension(filename), ptr, file.Length);
+            img = FromMemory(System.IO.Path.GetExtension(filename), ptr, file.Length);
+        img.Path = filename;
+        return img;
+    }
+    
+    public static async Task<Image> LoadUncachedAsync(string filename) {
+        var file = await Files.GetFile(filename).ReadBinaryAsync();
+        Image img;
+        unsafe {fixed (byte* ptr = file)
+            img = FromMemory(System.IO.Path.GetExtension(filename), ptr, file.Length);}
+        img.Path = filename;
+        return img;
+    }
+
+    public static async Task<Image> LoadAsync(string path) {
+        path = path.Replace('\\', '/');
+        if (AssetCache.TryGet<Image>(path, out var image)) return image;
+        if (!Files.FileExists(path)) throw new FileNotFoundException();
+        image = await LoadUncachedAsync(path);
+        AssetCache.Add(image);
+        return image;
+    }
+
+    public static Image Load(string path) {
+        path = path.Replace('\\', '/');
+        if (AssetCache.TryGet<Image>(path, out var image)) return image;
+        if (!Files.FileExists(path)) throw new FileNotFoundException();
+        image = LoadUncached(path);
+        AssetCache.Add(image);
+        return image;
     }
 
     public static Image LoadRaw(string filename, int width, int height, PixelFormat format, int headerSize) {

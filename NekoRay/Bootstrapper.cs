@@ -71,6 +71,7 @@ public static class Bootstrapper {
     
     [DebuggerHidden]
     public static int Start(string[] args) {
+        ThreadSafety.MarkThisThreadMain();
         Compat.RaylibSerilog.Use();
         new AssemblyFilesystem(typeof(Bootstrapper).Assembly).Mount();
         Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
