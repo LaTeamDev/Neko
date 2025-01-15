@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace Neko.Sdl.Video;
 
 public unsafe partial class Window : SdlWrapper<SDL_Window> {
-    protected SDL_Renderer* Renderer;
+    public Renderer Renderer;
     private readonly bool Initialized;
     protected Pin<Window> _pin;
 
@@ -29,16 +29,15 @@ public unsafe partial class Window : SdlWrapper<SDL_Window> {
 
     protected virtual void Create(int width, int height, string title, WindowFlags windowFlags) {
         fixed(SDL_Window** window = &Handle)
-        fixed(SDL_Renderer** renderer = &Renderer)
+        fixed(SDL_Renderer** renderer = &Renderer.Handle)
             if (!SDL_CreateWindowAndRenderer(title, width, height, (SDL_WindowFlags)(ulong)windowFlags, window, renderer)) 
                 throw new InvalidOperationException($"Failed to initialize window and renderer due to {SDL_GetError()}");
     }
 
-    public uint GetDisplay() =>
-        (uint)SDL_GetDisplayForWindow(Handle);
-
-    public float GetDisplayScale() =>
-        (uint)SDL_GetWindowDisplayScale(Handle);
+    //public Renderer Renderer => SDL_GetRenderer(Handle);
+    
+    public uint Display => (uint)SDL_GetDisplayForWindow(Handle);
+    public float DisplayScale => SDL_GetWindowDisplayScale(Handle);
 
     public void Flash(FlashOperation flashOperation) => SDL_FlashWindow(Handle, (SDL_FlashOperation)(int)flashOperation).ThrowIfError();
 
