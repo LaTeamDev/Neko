@@ -36,7 +36,7 @@ public class SdlWrapperConversionGenerator : ISourceGenerator {
                 sourceBuilder.AppendLine();
                 sourceBuilder.AppendLine($"public unsafe partial class {className} {{");
 
-                sourceBuilder.AppendLine($"    public {className}() : base() {{ }}");
+                //sourceBuilder.AppendLine($"    public {className}() : base() {{ }}");
                 sourceBuilder.AppendLine($"    public {className}({templateName}* id) : base(id) {{ }}");
                 sourceBuilder.AppendLine($"    public {className}(ref {templateName} id) : base(ref id) {{ }}");
 
