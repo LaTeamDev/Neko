@@ -1,9 +1,0 @@
-name = "Untitled Tower Defence Game"
-
-[meta]
-developers = ["VanderCat", "Mr.Yabloko", "DELL", "Zalyarowsky"]
-website = "https://github.com/LaTeamDev/NekoRay"
-
-[filesystem]
-bin = ["{{this}}/bin/"]
-mount = ["{{this}}", "{{this}}/custom/*"]

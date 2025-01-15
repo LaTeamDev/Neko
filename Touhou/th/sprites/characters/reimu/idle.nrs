@@ -1,9 +1,0 @@
-{
-  "texture": "textures/characters/reimu.qoi",
-  "bounds": {"x": 3, "y": "5", "width": 57, "height": 52},
-  "origin": {"x": 14, "y": 23},
-  "pixelSize": 1.0,
-  "attachmentPoints": {
-    "gohei": {"x": 56, "y": 52}
-  }
-}

@@ -1,11 +1,11 @@
-# NekoRay
-a silly game engine built on Raylib and NekoLib
+# Neko
+a sillier game engine built on NekoLib
 
-of course it is not finished and only a subset of raylib features is present
+it is an evolution from NekoRay, as i felt too limited to its contraints
 
 ## How to make a game
 this engine uses source like code mounting. so, to make a game create a **library project**
-reference NekoRay.dll/proj and extend `GameBase` (`Load()` will be your entry point).
+reference Neko.dll/proj and extend `GameBase` (`Load()` will be your entry point).
 to make engine recognize compiled dll you need to follow following structure
 ```
 .
@@ -14,17 +14,17 @@ to make engine recognize compiled dll you need to follow following structure
 │  ├─ bin
 │  │  └─ client.dll # this is where your compiled dll along it's dependecies should be
 │  └─ conf.toml 
-├─ NekoRay.exe
-└─ NekoRay.dll
+├─ Neko.exe
+└─ Neko.dll
 ```
 
 conf.toml sample content
 ```toml
-name = "Hotline Ponyami"
+name = "NekoGame"
 
 [meta]
-developers = ["VanderCat", "Mr.Yabloko"]
-website = "https://github.com/LaTeamDev/NekoRay"
+developers = ["You"]
+website = "https://github.com/You/NekoGame"
 
 [filesystem]
 bin = ["{{this}}/bin/"]
@@ -39,12 +39,12 @@ mount = ["{{this}}"]
 
 to run the game run 
 ```
-./NekoRay -game <gameid> #where <gameid> is the name of your game folder
+./Neko --game <gameid> #where <gameid> is the name of your game folder
 ```
 
 you can also set the default gameid on build
 ```shell
-dotnet build NekoRay /p:NekoRayDefaultGameId=<gameid>
+dotnet build Neko /p:NekoDefaultGameId=<gameid>
 ```
 
 ## Tips and Tricks
