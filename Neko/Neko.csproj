@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AssemblyAttribute Include="NekoRay.DefaultGameIdAttribute">
+        <AssemblyAttribute Include="Neko.DefaultGameIdAttribute">
             <_Parameter1>$(NekoRayDefaultGameId)</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>

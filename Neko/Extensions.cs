@@ -61,8 +61,8 @@ public static class Extensions {
     public static Size ToSize(this Vector2 vector) => new((int)vector.X, (int)vector.Y);
     
 
-    public static Sprite ToSprite(this Texture texture) =>
-        new (texture, new Rectangle(0, 0, texture.Width, texture.Height));
+    // public static Sprite ToSprite(this Texture texture) =>
+    //     new (texture, new Rectangle(0, 0, texture.Width, texture.Height));
     
     public static Quaternion YawPitchRollAsQuaternion(this Vector3 rotation) =>
         Quaternion.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z);

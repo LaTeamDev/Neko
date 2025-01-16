@@ -2,6 +2,8 @@ using ImGuiNET;
 using Neko.Tools;
 using NekoLib.Filesystem;
 using Neko.Physics2D;
+using Neko.Sdl;
+using Neko.Sdl.Video;
 using Serilog;
 using Serilog.Events;
 using Console = Neko.Tools.Console;
@@ -129,13 +131,22 @@ public abstract class GameBase {
     public virtual LoopFunction ErrorHandler(Exception msg) {
         var error = msg.ToString();
         Log.Fatal(msg, "An error occured");
-
+        var r = GameWindow.Instance.Renderer;
         void Draw() {
+            r.DrawColor = new Color(0, 0, 0, 0);
+            r.Clear();
+            r.DrawColor = new Color(255, 255, 255, 255);
+            var offset = 0f;
+            foreach (var line in msg.ToString().Split("\n")) {
+                r.DebugText(line, 0f, offset+=12f);
+            }
             //Raylib.ClearBackground(Raylib.RAYWHITE);
             //Raylib.DrawText(error, 70, 70, 10, Raylib.GRAY);
+            r.Present();
         }
 
         return () => {
+            Time.Step();
             //Raylib.BeginDrawing();
             Draw();
             //Raylib.EndDrawing();

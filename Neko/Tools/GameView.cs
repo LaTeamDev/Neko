@@ -89,7 +89,7 @@ public class GameView : ToolBehaviour {
                 //ImGui.Image((nint) Camera.MainCamera.RenderTexture.OpenGlHandle, wsize with {Y = wsize.X/aspectRatio}, new(0, 1), new(1, 0));
                 //if (w > wsize.X) wsize
                 ImGui.SetCursorPos((size - wsize)/2);
-                ImGui.Image((nint)BaseCamera.Main.RenderTexture.Texture._texture.id,wsize, new(0, 1), new(1, 0));
+                ImGui.Image((nint)BaseCamera.Main.RenderTexture.Pointer,wsize, new(0, 1), new(1, 0));
             }
             //else
             //ImGui.Image((nint)Texture.Missing.OpenGlHandle, wsize, new(0, 1), new(1, 0));

@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using Neko.Sdl.Video;
 using Neko.Tools;
 
 namespace Neko; 
@@ -24,15 +25,16 @@ public abstract class BaseCamera : Behaviour {
     }
     
     [Hide]
-    public RenderTexture? RenderTexture;
+    public Texture? RenderTexture;
 
     public BaseCamera() {
         RecreateRenderTexture();
     }
     
     public void RecreateRenderTexture() {
-        if (RenderTexture is not null) RenderTexture.Dispose(); 
-        RenderTexture = RenderTexture.Load(RenderWidth,RenderHeight);
+        if (RenderTexture is not null) RenderTexture.Dispose();
+        throw new NotImplementedException();
+        //RenderTexture = RenderTexture.Load(RenderWidth,RenderHeight);
     }
 
     private int? _renderWidth;

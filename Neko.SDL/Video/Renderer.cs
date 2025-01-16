@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neko.Sdl.Video;
 
-public unsafe partial class Renderer : SdlWrapper<SDL_Renderer> {
+public sealed unsafe partial class Renderer : SdlWrapper<SDL_Renderer> {
     public Renderer(Window window, string name) {
         Handle = SDL_CreateRenderer(window.Handle, name);
     }
@@ -98,7 +98,7 @@ public unsafe partial class Renderer : SdlWrapper<SDL_Renderer> {
         set => SDL_SetRenderDrawColorFloat(Handle, value.R, value.G, value.B, value.A).ThrowIfError();
     }
 
-    public string GetRenderDriver(int index) {
+    public static string GetRenderDriver(int index) {
         var str = SDL_GetRenderDriver(index);
         if (str is null) throw new SdlException("");
         return str;

@@ -31,9 +31,10 @@ public abstract class BaseScene : IScene {
         if (BaseCamera.Main is null) return;
         if (this != BaseCamera.Main.GameObject.Scene) return;
         
-        var texture = BaseCamera.Main.RenderTexture.Texture;
-        var rect = new Rectangle(0, 0, texture.Width, -texture.Height);
-        var rectDest = new Rectangle(0, 0, texture.Width, texture.Height);
+        var texture = BaseCamera.Main.RenderTexture;
+        var size = texture.Size;
+        var rect = new Rectangle(0, 0, (int)size.Width, (int)-size.Height);
+        var rectDest = new Rectangle(0, 0, (int)size.Width, (int)size.Height);
         throw new NotImplementedException();
         //texture.Draw(rect, rectDest, Vector2.Zero, 0f, Raylib.WHITE);
     }

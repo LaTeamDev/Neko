@@ -2,6 +2,7 @@ namespace Neko.Sdl;
 
 public abstract unsafe class SdlWrapper<T> : IDisposable where T : unmanaged {
     public T* Handle;
+    public IntPtr Pointer => (IntPtr)Handle;
     internal SdlWrapper(){}
 
     internal SdlWrapper(T* handle) {

@@ -27,7 +27,7 @@ public class SdlHintsSourceGenerator : ISourceGenerator
 
         // Generate the code
         var sourceBuilder = new StringBuilder();
-        sourceBuilder.AppendLine("namespace Neko.SDL");
+        sourceBuilder.AppendLine("namespace Neko.Sdl");
         sourceBuilder.AppendLine("{");
         sourceBuilder.AppendLine("    public partial class Hints");
         sourceBuilder.AppendLine("    {");

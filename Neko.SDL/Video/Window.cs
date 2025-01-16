@@ -20,7 +20,7 @@ public unsafe partial class Window : SdlWrapper<SDL_Window> {
         __windowIdCache[Id] = this;
         
         Initialized = true;
-        _pin = this.Pin();
+        _pin = this.Pin(GCHandleType.Normal);
     }
 
     private static Dictionary<uint, Window> __windowIdCache = new();
@@ -28,10 +28,18 @@ public unsafe partial class Window : SdlWrapper<SDL_Window> {
     public static Window GetFromPtr(SDL_Window* window) => __windowIdCache[(uint)SDL_GetWindowID(window)];
 
     protected virtual void Create(int width, int height, string title, WindowFlags windowFlags) {
-        fixed(SDL_Window** window = &Handle)
-        fixed(SDL_Renderer** renderer = &Renderer.Handle)
-            if (!SDL_CreateWindowAndRenderer(title, width, height, (SDL_WindowFlags)(ulong)windowFlags, window, renderer)) 
-                throw new InvalidOperationException($"Failed to initialize window and renderer due to {SDL_GetError()}");
+        var window = (IntPtr)0;
+        var renderer = (IntPtr)0;
+        if (!SDL_CreateWindowAndRenderer(
+                title, 
+                width, 
+                height, 
+                (SDL_WindowFlags)windowFlags, 
+                (SDL_Window**)Unsafe.AsPointer(ref window), 
+                (SDL_Renderer**)Unsafe.AsPointer(ref renderer))) 
+            throw new InvalidOperationException($"Failed to initialize window and renderer due to {SDL_GetError()}");
+        Handle = (SDL_Window*)window;
+        Renderer = new Renderer((SDL_Renderer*)renderer);
     }
 
     //public Renderer Renderer => SDL_GetRenderer(Handle);

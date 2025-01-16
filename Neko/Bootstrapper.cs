@@ -70,7 +70,6 @@ public static class Bootstrapper {
         }
     }
     
-    [DebuggerHidden]
     public static int Start(string[] args) {
         NekoSDL.Init(InitFlags.Video);
         ThreadSafety.MarkThisThreadMain();
@@ -97,11 +96,11 @@ public static class Bootstrapper {
             AppMetadata.Set(conf.Name, game.GetType().Assembly.GetName().Version?.ToString(), null);
             GameWindow.Init(WindowSettings.Instance.Width, WindowSettings.Instance.Height, conf.Name, game);
         }
-        catch (Exception e) when (!Debugger.IsAttached) {
+        catch (Exception e) {
             Console.WriteLine("Abort loading game due to {0}", e);
             game = new NoGame();
             game.Initlogging();
-            AppMetadata.Set("Neko", typeof(Texture).Assembly.GetName().Version?.ToString(), null);
+            AppMetadata.Set("Neko", typeof(GameBase).Assembly.GetName().Version?.ToString(), null);
             GameWindow.Init(800, 600, "Neko", game);
         }
 
