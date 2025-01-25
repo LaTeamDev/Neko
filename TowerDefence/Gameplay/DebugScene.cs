@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Box2D;
 using NekoLib.Core;
+using NekoLib.Extra;
+using NekoLib.Tools;
 using NekoRay;
 using NekoRay.Physics2D;
 using NekoRay.Tools;
@@ -8,7 +10,7 @@ using ZeroElectric.Vinculum;
 using Camera2D = NekoRay.Camera2D;
 
 namespace TowerDefence.Gameplay;
-public class DebugScene : BaseScene {
+public class DebugScene : Scene {
     [Show]
     private World _world;
     public override void Initialize() {

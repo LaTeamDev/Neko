@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Numerics;
 using HotlineSPonyami.Tools.EditorTools;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Scenes;
 using NekoRay;
 using NekoRay.Tools;
@@ -9,7 +10,7 @@ using ZeroElectric.Vinculum;
 
 namespace HotlineSPonyami.Tools;
 
-public class EditorScene : BaseScene, IBinarySavable
+public class EditorScene : Scene, IBinarySavable
 {
     private DragCamera _camera; public DragCamera Camera => _camera;
     private TileField _filed; public TileField Field => _filed;

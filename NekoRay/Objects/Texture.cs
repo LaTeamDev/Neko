@@ -1,6 +1,7 @@
 using System.Numerics;
 using NekoLib.Filesystem;
 using NekoRay.Tools;
+using Serilog;
 using ZeroElectric.Vinculum.Extensions;
 
 namespace NekoRay; 
@@ -22,7 +23,7 @@ public class Texture : NekoObject, IAsset {
 
     public static Texture LoadUncached(string file) {
         ThreadSafety.ThrowIfNotMainThread();
-        using var image = Image.Load(file);
+        using var image = Image.LoadUncached(file);
         var texture = FromImage(image);
         texture.Path = file;
         return texture;

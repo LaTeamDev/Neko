@@ -1,6 +1,8 @@
 using System.Numerics;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
+using NekoLib.Tools;
 using NekoRay;
 using NekoRay.Physics2D;
 using NekoRay.Tools;
@@ -40,7 +42,7 @@ public class WanderPlayerController : Behaviour
     void UpdateInputDirection() {
         _inputDirection = (Input.IsDown("right") ? 1f : 0f) +(Input.IsDown("left") ? -1f : 0f);
 
-        _normalizedInput = NekoMath.Damp(_normalizedInput, _inputDirection, ref _dampingVelocity, DampingSize);
+        _normalizedInput = NekoMath.Damp(_normalizedInput, _inputDirection, ref _dampingVelocity, DampingSize, Time.DeltaF);
     }
 
     public void UpdateAnimation() {

@@ -1,4 +1,5 @@
-﻿using NekoLib.Scenes;
+﻿using NekoLib.Extra;
+using NekoLib.Scenes;
 using NekoRay.Tools;
 using Serilog;
 

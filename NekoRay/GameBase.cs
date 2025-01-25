@@ -1,11 +1,13 @@
 using ImGuiNET;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
+using NekoLib.Tools;
 using NekoRay.Physics2D;
 using rlImGui_cs;
 using Serilog;
 using Serilog.Events;
 using NekoRay.Tools;
-using Console = NekoRay.Tools.Console;
+using Console = NekoLib.Extra.Console;
 
 namespace NekoRay; 
 
@@ -42,7 +44,7 @@ public abstract class GameBase {
             .MinimumLevel.Information()
 #endif
             .Enrich.FromLogContext()
-            .WriteTo.GameConsole()
+            //.WriteTo.GameConsole()
             .WriteTo.Console(LogEventLevel.Verbose, outputTemplate)
             .WriteTo.File($"logs/nekoray{DateTime.Now:yy.MM.dd-hh.MM.ss}.log", LogEventLevel.Verbose, outputTemplate);
     }

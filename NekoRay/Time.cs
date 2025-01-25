@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using NekoLib.Extra;
 using NekoRay.Tools;
 
 namespace NekoRay; 

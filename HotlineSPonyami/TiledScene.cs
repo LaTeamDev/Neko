@@ -1,5 +1,6 @@
 using System.Numerics;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoRay;
 using NekoRay.Physics2D;
 using ZeroElectric.Vinculum;
@@ -9,7 +10,7 @@ using Texture = NekoRay.Texture;
 
 namespace HotlineSPonyami;
 
-public class TiledScene : BaseScene
+public class TiledScene : Scene
 {
     private Texture _uvTexture;
     private Texture _tileAtlas;

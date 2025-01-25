@@ -1,6 +1,8 @@
 ﻿using System.Numerics;
 using Box2D;
 using NekoLib.Core;
+using NekoLib.Extra;
+using NekoLib.Tools;
 using NekoRay;
 using NekoRay.Physics2D;
 using NekoRay.Tools;
@@ -28,7 +30,7 @@ public class PlayerMiniGameController : Behaviour {
             currentNormalizedInput.Y = 0f;
             currentNormalizedInput.X = 0f;
         }
-        _normalizedInput = NekoMath.Damp(_normalizedInput, currentNormalizedInput, ref _dampingVelocity, DampingSize);
+        _normalizedInput = NekoMath.Damp(_normalizedInput, currentNormalizedInput, ref _dampingVelocity, DampingSize, Time.DeltaF);
     }
 
     [Show] public float DirectionAngle => MathF.Atan2(_normalizedInput.X,-_normalizedInput.Y);

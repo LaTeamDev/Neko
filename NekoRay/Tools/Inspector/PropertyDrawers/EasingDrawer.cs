@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using ImGuiNET;
+using NekoLib.Tools;
 using NekoRay.Easings;
 
 namespace NekoRay.Tools;

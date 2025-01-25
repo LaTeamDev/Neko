@@ -1,8 +1,9 @@
+using NekoLib.Extra;
 using NekoLib.Scenes;
 using NekoRay.Tools;
 using Serilog;
 using TowerDefence.Gameplay;
-using Console = NekoRay.Tools.Console;
+using Console = NekoLib.Extra.Console;
 
 namespace TowerDefence.Commands;
 

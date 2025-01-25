@@ -13,7 +13,7 @@ public static class AsepriteLoader {
         using var obj = JsonDocument.Parse(text);
 
         var filename = obj.RootElement.GetProperty("meta").GetProperty("image").GetString()??Path.GetFileNameWithoutExtension(path)+".png";
-        var texture = Data.GetTexture(Path.Combine(Path.GetDirectoryName(path)??"", filename));
+        var texture = NekoRay.Texture.Load(Path.Combine(Path.GetDirectoryName(path)??"", filename));
 
         var frames = obj.RootElement.GetProperty("frames");
 

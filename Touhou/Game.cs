@@ -9,7 +9,7 @@ public class Game : GameBase {
         base.Load(args);
         PlayerInfo.PreloadAll();
         if (DevMode) {
-            NekoRay.Tools.Console.ExecFile("autoexec_dev");
+            NekoLib.Extra.Console.ExecFile("autoexec_dev");
             SceneManager.LoadScene(new TestScene());
             return;
         }

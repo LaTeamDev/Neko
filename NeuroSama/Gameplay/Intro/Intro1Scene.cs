@@ -1,4 +1,5 @@
 ﻿using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
 using NekoRay;
 using NeuroSama.Gameplay.Dialogue;
@@ -9,7 +10,7 @@ using Camera2D = NekoRay.Camera2D;
 
 namespace NeuroSama.Gameplay.Intro;
 
-public class Intro1Scene : BaseScene {
+public class Intro1Scene : Scene {
     private Voice _voice;
 
     protected virtual void SpawnBackground() {

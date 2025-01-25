@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using NekoLib.Extra;
 using NekoRay.Tools;
 
 namespace NekoRay.Physics2D; 

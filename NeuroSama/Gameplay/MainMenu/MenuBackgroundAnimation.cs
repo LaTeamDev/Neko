@@ -1,4 +1,5 @@
-﻿using NekoLib.Core;
+﻿using System.ComponentModel.DataAnnotations;
+using NekoLib.Core;
 using NekoRay;
 using NekoRay.Tools;
 

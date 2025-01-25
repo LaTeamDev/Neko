@@ -1,5 +1,6 @@
 using Box2D;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoRay;
 using NekoRay.Physics2D;
 using NekoRay.Tools;

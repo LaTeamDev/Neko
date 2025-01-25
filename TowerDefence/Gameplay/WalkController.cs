@@ -1,5 +1,7 @@
 using System.Numerics;
 using Box2D;
+using NekoLib.Extra;
+using NekoLib.Tools;
 using NekoRay;
 using NekoRay.Physics2D;
 using NekoRay.Tools;
@@ -30,7 +32,7 @@ public class WalkController : IController {
             currentNormalizedInput.Y = 0f;
             currentNormalizedInput.X = 0f;
         }
-        _normalizedInput = NekoMath.Damp(_normalizedInput, currentNormalizedInput, ref _dampingVelocity, DampingSize);
+        _normalizedInput = NekoMath.Damp(_normalizedInput, currentNormalizedInput, ref _dampingVelocity, DampingSize, Time.DeltaF);
     }
     
     public void Update() {

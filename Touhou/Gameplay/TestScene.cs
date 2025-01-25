@@ -1,9 +1,10 @@
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoRay;
 
 namespace Touhou.Gameplay;
 
-public class TestScene : BaseScene {
+public class TestScene : Scene {
     public override void Initialize() {
         var camera = new GameObject("Camera").AddComponent<Camera2D>();
         camera.IsMain = true;

@@ -2,6 +2,7 @@ using System.Drawing;
 using Box2D;
 using System.Numerics;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
 using NekoRay;
 using NekoRay.Physics2D;
@@ -16,7 +17,7 @@ using Font = NekoRay.Font;
 
 namespace NeuroSama.Gameplay.Wander;
 
-public class WanderScene : BaseScene {
+public class WanderScene : Scene {
     private World _world;
     private Voice _voice;
     public override void Initialize() {

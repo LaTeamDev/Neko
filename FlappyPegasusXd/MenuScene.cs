@@ -2,6 +2,7 @@ using System.Numerics;
 using FlappyPegasus.GameStuff;
 using FlappyPegasus.Gui;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
 using NekoLib.Scenes;
 using NekoRay;
@@ -9,11 +10,12 @@ using Serilog;
 using SoLoud;
 using ZeroElectric.Vinculum;
 using Camera2D = NekoRay.Camera2D;
-using Console = NekoRay.Tools.Console;
+using Console = NekoLib.Extra.Console;
+using Texture = NekoRay.Texture;
 
 namespace FlappyPegasus; 
 
-public class MenuScene : BaseScene {
+public class MenuScene : Scene {
 
     private WavStream MenuMusic;
     public override void Initialize() {
@@ -37,26 +39,26 @@ public class MenuScene : BaseScene {
         background.Transform.Position = new Vector3(-256f, -144f, 0f);
         
         var cloudsB = background.AddChild("CloudsB").AddComponent<ShaderDrawBg>();
-        cloudsB.Texture = Data.GetTexture("texture/clouds2.png");
+        cloudsB.Texture = Texture.Load("texture/clouds2.png");
         cloudsB.Transform.LocalPosition = new Vector3(0f, 32f, 0f);
 
         var cloudsA = background.AddChild("CloudsA").AddComponent<ShaderDrawBg>();
-        cloudsA.Texture = Data.GetTexture("texture/clouds1.png");
+        cloudsA.Texture = Texture.Load("texture/clouds1.png");
         
         var groundA = background.AddChild("GroundA").AddComponent<ShaderDrawBg>();
-        groundA.Texture = Data.GetTexture("texture/Mountains_A.png");
+        groundA.Texture = Texture.Load("texture/Mountains_A.png");
         groundA.Transform.LocalPosition = new Vector3(0f, 288f - groundA.Texture.Height - 16f, 0f);
         
         var groundB = background.AddChild("GroundB").AddComponent<ShaderDrawBg>();
-        groundB.Texture = Data.GetTexture("texture/Mountains_B.png");
+        groundB.Texture = Texture.Load("texture/Mountains_B.png");
         groundB.Transform.LocalPosition = new Vector3(0f, 288f - groundB.Texture.Height, 0f);
         
         var groundC = background.AddChild("GroundC").AddComponent<ShaderDrawBg>();
-        groundC.Texture = Data.GetTexture("texture/Tree_A.png");
+        groundC.Texture = Texture.Load("texture/Tree_A.png");
         groundC.Transform.LocalPosition = new Vector3(0f, 288f - groundC.Texture.Height, 0f);
         
         var groundD = background.AddChild("GroundC").AddComponent<ShaderDrawBg>();
-        groundD.Texture = Data.GetTexture("texture/Ground_A.png");
+        groundD.Texture = Texture.Load("texture/Ground_A.png");
         groundD.Transform.LocalPosition = new Vector3(0f, 288f - groundD.Texture.Height, 0f);
         
         cloudsA.Speed = 2f;

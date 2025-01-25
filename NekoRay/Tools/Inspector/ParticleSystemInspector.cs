@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using ImGuiNET;
+using NekoLib.Tools;
 using ZeroElectric.Vinculum.Extensions;
 
 namespace NekoRay.Tools;

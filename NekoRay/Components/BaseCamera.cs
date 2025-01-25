@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using NekoLib.Tools;
 using NekoRay.Tools;
 
 namespace NekoRay; 

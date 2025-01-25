@@ -1,4 +1,5 @@
 ﻿using NekoLib.Core;
+using NekoLib.Extra;
 using NekoRay;
 using NekoRay.Physics2D;
 using ZeroElectric.Vinculum;
@@ -6,7 +7,7 @@ using Camera2D = NekoRay.Camera2D;
 
 namespace HotlineSPonyami.Gameplay.DebugStuff; 
 
-public class DebugScene : BaseScene {
+public class DebugScene : Scene {
     public override void Initialize() {
         this.CreateWorld();
         this.GetWorld().Sleeping = false;

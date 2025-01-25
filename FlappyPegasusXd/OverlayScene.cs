@@ -1,12 +1,13 @@
 using System.Numerics;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Scenes;
 using ZeroElectric.Vinculum;
 using NekoRay;
 
 namespace FlappyPegasus; 
 
-public abstract class OverlayScene : BaseScene {
+public abstract class OverlayScene : Scene {
 
     private IScene _prevScene;
     protected GameObject MainGameRoot;

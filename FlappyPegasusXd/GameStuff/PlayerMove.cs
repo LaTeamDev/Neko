@@ -1,6 +1,7 @@
 using System.Numerics;
 using Box2D;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
 using NekoRay;
 using NekoRay.Physics2D;
@@ -55,7 +56,7 @@ public class PlayerMove : Behaviour {
             Sprite.Transform.Rotation, 
             Quaternion.CreateFromAxisAngle(Vector3.UnitZ, rb2D.LinearVelocity.Y * rotateSpd/World.LengthUnitsPerMeter),
             ref smoothDamp,
-            0.2f);
+            0.2f, Time.DeltaF);
     }
 
 

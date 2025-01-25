@@ -8,7 +8,7 @@ using NekoLib.Scenes;
 using NekoRay;
 using NekoRay.Physics2D;
 using ZeroElectric.Vinculum;
-using Console = NekoRay.Tools.Console;
+using Console = NekoLib.Extra.Console;
 
 namespace HotlineSPonyami;
 

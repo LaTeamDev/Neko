@@ -1,6 +1,7 @@
 using System.Numerics;
 using Box2D;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoRay;
 using NekoRay.Physics2D;
 using TowerDefence.Gameplay.UI;
@@ -11,7 +12,7 @@ using Timer = NekoLib.Core.Timer;
 
 namespace TowerDefence.Gameplay;
 
-public class GameScene : BaseScene {
+public class GameScene : Scene {
     private World _world;
     private Timer _spawner;
     public override void Initialize() {

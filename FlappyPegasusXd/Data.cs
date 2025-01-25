@@ -12,13 +12,6 @@ public static class Data {
     private static Dictionary<string, Font> _fonts = new();
     private static Dictionary<string, Shader> _shaders = new();
 
-    public static Texture GetTexture(string path) {
-        if (_textures.TryGetValue(path, out var texture))
-            return texture;
-        _textures[path] = Texture.Load(path);
-        return _textures[path];
-    }
-
     public static Font GetFont(string path, string text) {
         if (_fonts.TryGetValue(path, out var font))
             return font;
@@ -27,7 +20,7 @@ public static class Data {
     }
     
     public static Sprite GetSprite(string path) {
-        var texture = GetTexture(path);
+        var texture = Texture.Load(path);
         var sprite = new Sprite(texture, new Rectangle(0, 0, texture.Width, texture.Height));
         return sprite;
     }

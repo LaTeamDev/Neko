@@ -2,6 +2,7 @@
 using System.Numerics;
 using Box2D;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
 using NekoRay;
 using NekoRay.Physics2D;
@@ -12,7 +13,7 @@ using Camera2D = NekoRay.Camera2D;
 
 namespace NeuroSama.Gameplay.MiniGame;
 
-public class MiniGameScene : BaseScene {
+public class MiniGameScene : Scene {
     public World World;
     private Voice _voice;
     public override void Initialize() {

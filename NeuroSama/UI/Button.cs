@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoRay;
 using NekoRay.Tools;
 using Serilog;

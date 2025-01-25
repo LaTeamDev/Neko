@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using NekoLib.Core;
+using NekoLib.Tools;
 using NekoRay;
 using NekoRay.Tools;
 

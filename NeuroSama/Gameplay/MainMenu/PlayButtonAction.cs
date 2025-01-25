@@ -6,6 +6,6 @@ namespace NeuroSama.Gameplay.MainMenu;
 
 public class PlayButtonAction : Behaviour {
     void OnButtonPressed(Button sender) { //TODO: click
-        NekoRay.Tools.Console.Submit("newgame");
+        NekoLib.Extra.Console.Submit("newgame");
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System.Numerics;
 using ImGuiNET;
+using NekoLib.Extra;
 using NekoRay.Tools;
 using rlImGui_cs;
 using Serilog;
-using Console = NekoRay.Tools.Console;
+using Console = NekoLib.Extra.Console;
 
 namespace NekoRay; 
 

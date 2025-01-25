@@ -2,7 +2,7 @@ using FlappyPegasus.Gui;
 using NekoLib.Core;
 using NekoLib.Scenes;
 using NekoRay;
-using Console = NekoRay.Tools.Console;
+using Console = NekoLib.Extra.Console;
 
 namespace FlappyPegasus; 
 

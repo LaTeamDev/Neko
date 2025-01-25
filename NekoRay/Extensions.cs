@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Box2D.Interop;
 using ImGuiNET;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
 using Rectangle = ZeroElectric.Vinculum.Rectangle;
 
@@ -33,9 +34,6 @@ public static class Extensions {
         }
     }
 
-    public static bool IsNullable(this Type type) =>
-        type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-
     public static unsafe ImFontPtr AddFontFromFilesystemTTF(this ImFontAtlasPtr fontAtlas, string filename, float size_pixels) {
         var file = Files.GetFile(filename).ReadBinary();
         var ptr = Marshal.AllocHGlobal(file.Length);
@@ -51,15 +49,7 @@ public static class Extensions {
         file.CopyTo(span);
         return fontAtlas.AddFontFromMemoryTTF(ptr, span.Length, size_pixels, font_cfg);
     }
-
-    public static AttachMode UseTemporarily(this IScene scene) {
-        var prev = SceneManager.ActiveScene;
-        SceneManager.SetSceneActive(scene);
-        return new AttachMode(() => {
-            SceneManager.SetSceneActive(prev);
-        });
-    }
-
+    
     public static Vector2 ToVector2(this Point point) => new(point.X, point.Y);
     public static Vector2 ToVector2(this Size point) => new(point.Width, point.Height);
     public static Point ToPoint(this Vector2 vector) => new((int)vector.X, (int)vector.Y);
@@ -88,21 +78,5 @@ public static class Extensions {
             if (_blendModes.TryPeek(out var prev))
                 Raylib.BeginBlendMode(prev);
         });
-    }
-    
-    public static Type? GetUnderlyingType(this MemberInfo member)
-    {
-        switch (member.MemberType)
-        {
-            case MemberTypes.Event:
-                return ((EventInfo)member).EventHandlerType;
-            case MemberTypes.Field:
-                return ((FieldInfo)member).FieldType;
-            case MemberTypes.Method:
-                return ((MethodInfo)member).ReturnType;
-            case MemberTypes.Property:
-                return ((PropertyInfo)member).PropertyType;
-        }
-        return null;
     }
 }

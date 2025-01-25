@@ -1,9 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using CommandLine;
+using Microsoft.Extensions.Logging;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
+using NekoLib.Tools;
 using Serilog;
 using Tomlyn;
+using Console = System.Console;
 
 namespace NekoRay;
 
@@ -103,8 +107,11 @@ public static class Bootstrapper {
             Raylib.InitWindow(800, 600, "NekoRay");
         }
         Raylib.SetExitKey(0);
-
-        Tools.Console.Init();
+        
+        using var factory = LoggerFactory.Create(builder => builder.AddSerilog().AddNekoLibConsole());
+        var logger = factory.CreateLogger("Neko");
+        GC.KeepAlive(typeof(ToolBehaviour)); //hack
+        NekoLib.Extra.Console.Init(logger);
        
         try {
             var loopFunction = game.Run(args);

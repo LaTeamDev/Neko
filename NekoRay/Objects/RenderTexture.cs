@@ -1,3 +1,5 @@
+using NekoLib.Extra;
+
 namespace NekoRay; 
 
 public class RenderTexture : NekoObject, IDisposable {

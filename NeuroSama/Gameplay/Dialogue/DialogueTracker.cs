@@ -1,4 +1,5 @@
-﻿using NekoRay;
+﻿using NekoLib.Extra;
+using NekoRay;
 using ZeroElectric.Vinculum.Extensions;
 
 namespace NeuroSama.Gameplay.Dialogue;

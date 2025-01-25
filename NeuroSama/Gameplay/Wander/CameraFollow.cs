@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Numerics;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoRay;
 
 namespace NeuroSama.Gameplay.Wander;
@@ -15,6 +16,6 @@ public class CameraFollow : Behaviour {
     private float _velocity;
     
     void LateUpdate() {
-        Transform.Position = Transform.Position with {X= NekoMath.Damp(Transform.Position.X, Math.Clamp(FollowTarget.Position.X, LimitMin, LimitMax), ref _velocity, Smooth)};
+        Transform.Position = Transform.Position with {X= NekoMath.Damp(Transform.Position.X, Math.Clamp(FollowTarget.Position.X, LimitMin, LimitMax), ref _velocity, Smooth, Time.DeltaF)};
     }
 }

@@ -1,4 +1,5 @@
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoRay.Tools;
 using ZeroElectric.Vinculum;
 

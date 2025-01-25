@@ -1,4 +1,5 @@
 ﻿using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Scenes;
 using NekoRay;
 using NekoRay.Easings;
@@ -8,7 +9,7 @@ using Camera2D = NekoRay.Camera2D;
 
 namespace NeuroSama;
 
-public class SplashScene : BaseScene {
+public class SplashScene : Scene {
     public Queue<string> Splashes = new();
 
     public SplashScene(IScene next, params string[] splashes) {

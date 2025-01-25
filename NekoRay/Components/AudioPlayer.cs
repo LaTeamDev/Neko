@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using NekoLib.Extra;
 using SoLoud;
 
 namespace NekoRay;
@@ -27,7 +28,7 @@ public class AudioPlayer : Behaviour {
     private float _smooth = 0.01f;
 
     void LateUpdate() {
-        _velocity = NekoMath.Damp((Transform.Position - _prevPosition)/Time.DeltaF,_velocity, ref _dampVelocity, _smooth);
+        _velocity = NekoMath.Damp((Transform.Position - _prevPosition)/Time.DeltaF,_velocity, ref _dampVelocity, _smooth, Time.DeltaF);
         _prevPosition = Transform.Position;
         Voice?.Set3dSourceParameters(Transform.Position, _velocity);
     }

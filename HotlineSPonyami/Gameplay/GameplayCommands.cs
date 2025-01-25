@@ -2,6 +2,7 @@
 using HotlineSPonyami.Gameplay.DebugStuff;
 using NekoLib;
 using NekoLib.Core;
+using NekoLib.Extra;
 using NekoLib.Scenes;
 using NekoRay;
 using NekoRay.Physics2D;
