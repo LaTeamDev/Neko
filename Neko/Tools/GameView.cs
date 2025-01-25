@@ -4,8 +4,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using ImGuiNET;
 using JetBrains.Annotations;
+using Neko;
+using NekoLib.Extra;
 
-namespace Neko.Tools; 
+namespace NekoLib.Tools; 
 
 public class GameView : ToolBehaviour {
     private static int _renderWidth;
@@ -53,7 +55,7 @@ public class GameView : ToolBehaviour {
         _renderWidth = BaseCamera.Main?.RenderWidth ?? DisplayWidth;
         _renderHeight = BaseCamera.Main?.RenderHeight ?? DisplayHeight;
         if (ImGui.Begin("Game View", ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.HorizontalScrollbar)) {
-            var size = ImGui.GetWindowContentRegionMax()-ImGui.GetWindowContentRegionMin();
+            var size = ImGui.GetContentRegionAvail();
             if (ImGui.BeginMenuBar()) {
                 if (ImGui.BeginMenu("Display Settings")) {
                     ImGui.SeparatorText("Render Size");

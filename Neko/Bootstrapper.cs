@@ -1,14 +1,30 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using CommandLine;
+using Microsoft.Extensions.Logging;
 using Neko.Sdl;
+using Neko.Sdl.Extra.MessageBox;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
+using NekoLib.Tools;
 using Serilog;
 using Tomlyn;
+using Console = NekoLib.Extra.Console;
 
 namespace Neko;
 
 public static class Bootstrapper {
+    
+    private static void CrashHandler(object sender, UnhandledExceptionEventArgs e) {
+        if (e.ExceptionObject is Exception exception) {
+            MessageBox.ShowSimple("Neko", 
+                $"Neko encountered an error it could not recover from:\n{exception}\n\n If you see an error about dll not found on Windows, most probably you don't have Visual C++ Redistributables installed.", MessageBoxFlags.Error);
+        }
+        else {
+            MessageBox.ShowSimple("Neko",
+                $"Neko encountered an error it could not recover from AND it is not exception.\nHow?", MessageBoxFlags.Error);
+        }
+    }
     private static NekoRayConf ReadConf(string id) {
         Stream fileStream;
         var path = $"{id}/conf.toml";
@@ -71,6 +87,7 @@ public static class Bootstrapper {
     }
     
     public static int Start(string[] args) {
+        AppDomain.CurrentDomain.UnhandledException += CrashHandler;
         NekoSDL.Init(InitFlags.Video);
         ThreadSafety.MarkThisThreadMain();
         new AssemblyFilesystem(typeof(Bootstrapper).Assembly).Mount();
@@ -88,23 +105,25 @@ public static class Bootstrapper {
         var gameId = CliOptions.Instance.Game??gameAttr?.GameId??"default";
 
         GameBase game; 
-        try {
-            var conf = ReadConf(gameId);
-            MountPaths(conf, gameId);
-            game = GetGame(conf.Filesystem.Bin, gameId);
-            game.Initlogging();
-            AppMetadata.Set(conf.Name, game.GetType().Assembly.GetName().Version?.ToString(), null);
-            GameWindow.Init(WindowSettings.Instance.Width, WindowSettings.Instance.Height, conf.Name, game);
-        }
-        catch (Exception e) {
-            Console.WriteLine("Abort loading game due to {0}", e);
+        // try {
+        //     var conf = ReadConf(gameId);
+        //     MountPaths(conf, gameId);
+        //     game = GetGame(conf.Filesystem.Bin, gameId);
+        //     game.Initlogging();
+        //     AppMetadata.Set(conf.Name, game.GetType().Assembly.GetName().Version?.ToString(), null);
+        //     GameWindow.Init(WindowSettings.Instance.Width, WindowSettings.Instance.Height, conf.Name, game);
+        // }
+        // catch (Exception e) {
+            //Console.WriteLine("Abort loading game due to {0}", e);
             game = new NoGame();
             game.Initlogging();
             AppMetadata.Set("Neko", typeof(GameBase).Assembly.GetName().Version?.ToString(), null);
             GameWindow.Init(800, 600, "Neko", game);
-        }
-
-        Tools.Console.Init();
+        //}
+        using var factory = LoggerFactory.Create(builder => builder.AddSerilog().AddNekoLibConsole());
+        var logger = factory.CreateLogger("Neko");
+        GC.KeepAlive(typeof(ToolBehaviour)); //hack
+        Console.Init(logger);
         GameWindow.Instance?.Run(args);
         GameWindow.Instance?.Dispose();
         NekoSDL.Quit();

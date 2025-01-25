@@ -1,12 +1,19 @@
 using ImGuiNET;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Neko.Tools;
 using NekoLib.Filesystem;
 using Neko.Physics2D;
 using Neko.Sdl;
+using Neko.Sdl.ImGuiBackend;
 using Neko.Sdl.Video;
+using NekoLib.Extra;
+using NekoLib.Tools;
+using SDL;
 using Serilog;
 using Serilog.Events;
-using Console = Neko.Tools.Console;
+using Console = NekoLib.Extra.Console;
+using ILogger = Serilog.ILogger;
 
 namespace Neko; 
 
@@ -25,6 +32,7 @@ public abstract class GameBase {
 
     public static ILogger Log;
     public unsafe virtual void Initlogging() {
+        //logger.LogInformation("Hello World! Logging is {Description}.", "fun");
         var loggingCfg = ConfigureLogger(new LoggerConfiguration());
         Serilog.Log.Logger = loggingCfg
             .CreateLogger()
@@ -96,6 +104,25 @@ public abstract class GameBase {
         Audio.Init();
         //rlImGui.SetupUserFonts = SetupImGuiFonts;
         //rlImGui.Setup(true, true);
+        ImGui.CreateContext();
+        var io = ImGui.GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags.NavEnableGamepad;      // Enable Gamepad Controls
+        //io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;         // Enable Docking
+
+        // Setup Dear ImGui style
+        ImGui.StyleColorsDark();
+        //ImGui::StyleColorsLight();
+
+        // Setup Platform/Renderer backends
+        var r = GameWindow.Instance.Renderer;
+        ImGuiSdl.InitForSDLRenderer(GameWindow.Instance, r);
+        ImGuiSdlRenderer.Init(r);
+        
+        // Our state
+        bool show_demo_window = true;
+        bool show_another_window = false;
+        //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
         Load(args);
         return () => {
             Time.Step();
@@ -109,13 +136,18 @@ public abstract class GameBase {
                 Time._fixedTime -= Time.FixedDeltaF;
             }
             //Raylib.BeginDrawing();
-            //Raylib.ClearBackground(Raylib.BLACK);
+            r.DrawColor = new Color(0xFF000000);
+            r.Clear();
             Draw();
-            //rlImGui.Begin(Time.DeltaF);
+            ImGuiSdlRenderer.NewFrame();
+            ImGuiSdl.NewFrame();
+            ImGui.NewFrame();
+            ImGui.ShowDemoWindow();
             if (DevMode) ImGui.DockSpaceOverViewport(0, ImGui.GetMainViewport());
             DrawGui();
-            //rlImGui.End();
-            //Raylib.EndDrawing();
+            ImGui.Render();
+            ImGuiSdlRenderer.RenderDrawData(ImGui.GetDrawData(), r);
+            r.Present();
         };
     }
 

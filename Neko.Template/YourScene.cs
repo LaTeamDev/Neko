@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using NekoLib.Core;
 using Neko;
+using NekoLib.Extra;
 
 namespace NekoRay.Template;
 

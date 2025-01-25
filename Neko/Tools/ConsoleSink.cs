@@ -14,7 +14,7 @@ public class ConsoleSink : ILogEventSink
 
     public void Emit(LogEvent logEvent)
     {
-        var message = logEvent.RenderMessage(_formatProvider);
-        Console.Log(message);
+        // var message = logEvent.RenderMessage(_formatProvider);
+        // Console.Log(message);
     }
 }

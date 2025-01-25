@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Neko.Tools;
+using NekoLib.Extra;
 
 namespace Neko;
 

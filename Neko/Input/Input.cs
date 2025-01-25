@@ -1,8 +1,8 @@
 ﻿using System.Numerics;
 using ImGuiNET;
 using Neko.Tools;
+using NekoLib.Extra;
 using Serilog;
-using Console = Neko.Tools.Console;
 
 namespace Neko; 
 
