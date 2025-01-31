@@ -1,4 +1,5 @@
-﻿using NekoLib.Filesystem;
+﻿using System.Numerics;
+using NekoLib.Filesystem;
 using NekoRay;
 using SoLoud;
 using ZeroElectric.Vinculum;
@@ -37,10 +38,11 @@ public static class Data
         return _fonts[path];
     }
     
-    public static Sprite GetSprite(string path) {
+    public static Sprite GetSprite(string path) { 
         path = path.Replace('\\', '/');
         var texture = Texture.Load(path);
         var sprite = new Sprite(texture, new Rectangle(0, 0, texture.Width, texture.Height));
+        sprite.Origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
         return sprite;
     }
 

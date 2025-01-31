@@ -11,6 +11,7 @@ public class Sprite : NekoObject, IAsset {
     public Vector2 Origin;
     public float Width => Bounds.Width;
     public float Height => Bounds.Height;
+    public float PixelSize = 1f;
     public Sprite(Texture texture, Rectangle bounds) {
         Texture = texture;
         Bounds = bounds;
@@ -37,9 +38,10 @@ public class Sprite : NekoObject, IAsset {
 
     public static Sprite LoadUncached(string path) {
         var spriteFile = SpriteFile.Load(path);
-        var sprite = new Sprite(Texture.Load(spriteFile.Texture), spriteFile.Bounds) {
+        var sprite = new Sprite(Texture.Load(spriteFile.Texture), spriteFile.Bounds.ToRaylib()) {
             Origin = spriteFile.Origin,
             Path = path,
+            PixelSize = spriteFile.PixelSize,
         };
         return sprite;
     }
@@ -47,8 +49,9 @@ public class Sprite : NekoObject, IAsset {
     public void Reload() {
         var spriteFile = SpriteFile.Load(Path);
         Texture = Texture.Load(spriteFile.Texture);
-        Bounds = spriteFile.Bounds;
+        Bounds = spriteFile.Bounds.ToRaylib();
         Origin = spriteFile.Origin;
+        PixelSize = spriteFile.PixelSize;
     }
     
     public void Draw(Vector2 destination, Vector2? scale = null, float rotation = 0f, Color? color = null) {

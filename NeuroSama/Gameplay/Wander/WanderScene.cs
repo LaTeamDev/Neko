@@ -29,7 +29,7 @@ public class WanderScene : Scene {
         camera.Zoom = 1f;
         // var player = playerAnimation.GameObject.AddComponent<PlayerMove>();
         var backgroundbg = new GameObject("backgroundbg").AddComponent<SpriteRenderer2D>();
-        backgroundbg.Sprite = Data.GetSprite("textures/location1_bg.png");
+        backgroundbg.Sprite = Sprite.Load("sprites/location1_bg.nrs");
         backgroundbg.Transform.Position = new Vector3(-640f, -24f, -2f);
         backgroundbg.ProportionallyScaleByHeight(720);
         backgroundbg.Sprite.Origin = new Vector2(0, backgroundbg.Sprite.Height*0.5f);
@@ -39,7 +39,7 @@ public class WanderScene : Scene {
         bgbgParallax.Transform.Position = new Vector3(-940f, -24f, -2f);
         
         var background = new GameObject("background").AddComponent<SpriteRenderer2D>();
-        background.Sprite = Data.GetSprite("textures/location1_fg.png");
+        background.Sprite = Sprite.Load("sprites/location1_fg.nrs");
         background.Transform.Position = new Vector3(-640f, -24f, -1f);
         background.ProportionallyScaleByHeight(720);
         background.Sprite.Origin = new Vector2(0, background.Sprite.Height*0.5f);

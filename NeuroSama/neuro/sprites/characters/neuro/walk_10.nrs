@@ -1,0 +1,6 @@
+{
+  "texture": "textures/characters/neuro/walk_10.png",
+  "bounds": {"x": 0, "y": 0, "width": 5400, "height": 7200},
+  "origin": {"x": 2700, "y": 3600},
+  "pixelSize": 0.09
+}

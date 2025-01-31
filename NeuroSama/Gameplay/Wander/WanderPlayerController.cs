@@ -25,10 +25,10 @@ public class WanderPlayerController : Behaviour
 
     void Awake() {
         Renderer2D = GameObject.AddChild("Sprite").AddComponent<SpriteRenderer2D>();
-        WalkSprites = AnimDef.FromFile("textures/characters/neuro/walkanim.toml");
-        StandSprite = Data.GetSprite("textures/characters/neuro/stand.png");
+        WalkSprites = AnimDef.FromFile("animations/characters/neuro/walk.toml");
+        StandSprite = Sprite.Load("sprites/characters/neuro/stand.nrs");
         Renderer2D.Sprite = WalkSprites.FramesSprites[_frame];
-        Renderer2D.ProportionallyScaleByWidth(486);
+        //Renderer2D.ProportionallyScaleByWidth(486);
         Renderer2D.Transform.LocalPosition = new Vector3(0, -44f, 0);
         Renderer2D.Color = new Color(200, 200, 200, 255);
     }

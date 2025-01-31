@@ -34,22 +34,22 @@ public class GameScene : Scene {
 
         #region Background
         var background = new GameObject("Background");
-        background.Transform.Position = new Vector3(-256f, -144f, 0f);
+        background.Transform.Position = new Vector3(-256f, -144f, -1f);
         
         var cloudsB = background.AddChild("CloudsB").AddComponent<ShaderDrawBg>();
         cloudsB.Texture = Texture.Load("texture/clouds2.png");
-        cloudsB.Transform.LocalPosition = new Vector3(0f, 32f, 0f);
+        cloudsB.Transform.LocalPosition = new Vector3(0f, 32f, -1f);
 
         var cloudsA = background.AddChild("CloudsA").AddComponent<ShaderDrawBg>();
         cloudsA.Texture = Texture.Load("texture/clouds1.png");
         
         var groundA = background.AddChild("GroundA").AddComponent<ShaderDrawBg>();
         groundA.Texture = Texture.Load("texture/Mountains_A.png");
-        groundA.Transform.LocalPosition = new Vector3(0f, 288f - groundA.Texture.Height - 16f, 0f);
+        groundA.Transform.LocalPosition = new Vector3(0f, 288f - groundA.Texture.Height - 16f, -2f);
         
         var groundB = background.AddChild("GroundB").AddComponent<ShaderDrawBg>();
         groundB.Texture = Texture.Load("texture/Mountains_B.png");
-        groundB.Transform.LocalPosition = new Vector3(0f, 288f - groundB.Texture.Height, 0f);
+        groundB.Transform.LocalPosition = new Vector3(0f, 288f - groundB.Texture.Height, -1f);
         
         var groundC = background.AddChild("GroundC").AddComponent<ShaderDrawBg>();
         groundC.Texture = Texture.Load("texture/Tree_A.png");

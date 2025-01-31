@@ -1,0 +1,6 @@
+{
+  "texture": "textures/dialogues/neuro neutral.png",
+  "bounds": {"x": 0, "y": 0, "width": 2863, "height": 3782},
+  "origin": {"x": 1431.5, "y": 1891},
+  "pixelSize": 0.157
+}

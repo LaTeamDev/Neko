@@ -1,4 +1,5 @@
-﻿using NekoLib.Core;
+﻿using System.Numerics;
+using NekoLib.Core;
 using NekoLib.Extra;
 using NekoLib.Scenes;
 using NekoRay;
@@ -59,6 +60,7 @@ public class SplashScene : Scene {
         splash.Sprite = Data.GetSprite(Path.Join("textures", "splash", name + ".png"));
         splash.Width = 1280;
         splash.Height = 720;
+        splash.Sprite.Origin = new Vector2(splash.Sprite.Width/2, splash.Sprite.Height/2);
         splash.Color = Raylib.WHITE.Fade(0f);
         _ease = Ease.To(() => splash.Color.a,
             value => splash.Color = splash.Color with {a = (byte)value}, 

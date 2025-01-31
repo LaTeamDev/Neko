@@ -1,0 +1,6 @@
+{
+  "texture": "textures/logo.png",
+  "bounds": {"x": 0, "y": 0, "width": 464, "height": 30},
+  "origin": {"X": 232, "Y": 15},
+  "pixelSize": 1.0
+}

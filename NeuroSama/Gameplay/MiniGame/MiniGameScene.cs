@@ -24,11 +24,11 @@ public class MiniGameScene : Scene {
         camera.Zoom = 2f;
 
         var background = new GameObject("background").AddComponent<SpriteRenderer2D>();
-        background.Sprite = Data.GetSprite("textures/minigame/ballpit.png");
+        background.Sprite = Sprite.Load("sprites/minigame/ballpit.nrs");
         background.Transform.Position = new Vector3(-1f, -24f, -1f);
 
         var tutel = new GameObject("Tutel").AddComponent<SpriteRenderer2D>();
-        tutel.Sprite = Data.GetSprite("textures/minigame/tutel.png");
+        tutel.Sprite = Sprite.Load("sprites/minigame/tutel.nrs");
         var player = tutel.GameObject.AddComponent<PlayerMiniGameController>();
         var playerCollider = player.GameObject.AddComponent<CircleCollider>();
         playerCollider.Radius = 9f;
@@ -45,7 +45,7 @@ public class MiniGameScene : Scene {
         
 
         var overlay = gameObject.AddChild("Overlay").AddComponent<SpriteRenderer2D>();
-        overlay.Sprite = Data.GetSprite("textures/minigame/overlay.png");
+        overlay.Sprite = Sprite.Load("sprites/minigame/overlay.nrs");
         overlay.Width = 1280/2;
         overlay.Height = 720/2;
         overlay.BlendMode = BlendMode.BLEND_ADDITIVE;
@@ -92,7 +92,7 @@ public class MiniGameScene : Scene {
 
     private void CreateSprite(Vector2 pos, string path, bool small = true) {
         var background = new GameObject(path).AddComponent<SpriteRenderer2D>();
-        background.Sprite = Data.GetSprite("textures/minigame/"+path+".png");
+        background.Sprite = Sprite.Load("sprites/minigame/"+path+".nrs");
         background.Transform.Position = new Vector3(pos, 0f);
         if (small) background.Transform.LocalScale = Vector3.One / 2;
     }

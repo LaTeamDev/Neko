@@ -12,7 +12,7 @@ public class AnimDef {
     public static AnimDef FromFile(string path) {
         var file = Toml.ToModel<AnimDef>(Files.GetFile(path).Read());
         foreach (var frame in file.Frames) {
-            file.FramesSprites.Add(Data.GetSprite(Path.Join(Path.GetDirectoryName(path), frame)));
+            file.FramesSprites.Add(Sprite.Load(frame));
         }
         return file;
     }

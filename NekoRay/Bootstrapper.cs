@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NekoLib.Extra;
 using NekoLib.Filesystem;
 using NekoLib.Tools;
+using NekoRay.Compat;
 using Serilog;
 using Tomlyn;
 using Console = System.Console;
@@ -111,7 +112,7 @@ public static class Bootstrapper {
         using var factory = LoggerFactory.Create(builder => builder.AddSerilog().AddNekoLibConsole());
         var logger = factory.CreateLogger("Neko");
         GC.KeepAlive(typeof(ToolBehaviour)); //hack
-        NekoLib.Extra.Console.Init(logger);
+        NekoLib.Extra.Console.Init(logger, new NekoLibVfs());
        
         try {
             var loopFunction = game.Run(args);

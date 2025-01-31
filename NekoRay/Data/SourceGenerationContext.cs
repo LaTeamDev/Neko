@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace NekoRay.Data;
 
-[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
+[JsonSourceGenerationOptions(JsonSerializerDefaults.Web, IncludeFields = true)]
 [JsonSerializable(typeof(SpriteFile))]
 [JsonSerializable(typeof(SpriteAnimationFile))]
 internal partial class SourceGenerationContext : JsonSerializerContext

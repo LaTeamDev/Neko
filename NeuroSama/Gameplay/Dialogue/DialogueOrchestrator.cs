@@ -72,7 +72,7 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
         PrevText.Transform.LocalPosition = new Vector3(640, -96, 0);
         PrevText.Color = Raylib.WHITE.Fade(0f);
         
-        SpriteLeft.Sprite = Data.GetSprite("textures/dialogues/neuro neutral.png");
+        SpriteLeft.Sprite = Sprite.Load("sprites/dialogues/neuro neutral.nrs");
         SpriteCenter.Sprite = SpriteLeft.Sprite;
         SpriteRight.Sprite = SpriteLeft.Sprite;
         SpriteLeft.Transform.LocalPosition = new Vector3(256, 467, 0);
@@ -250,7 +250,7 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
 
     public void ShowSprite(DialogueShowSprite showSprite) {
         var spritePos = showSprite.Position;
-        var sprite = Data.GetSprite($"textures/dialogues/{showSprite.Name} {showSprite.Emotion}.png");
+        var sprite = Sprite.Load($"sprites/dialogues/{showSprite.Name} {showSprite.Emotion}.nrs");
         var renderer = spritePos switch {
             DialoguePosition.Left => SpriteLeft,
             DialoguePosition.Center => SpriteCenter,
@@ -264,7 +264,7 @@ public class DialogueOrchestrator : Behaviour, IObserver<DialogueEvent> {
             _ => throw new ArgumentOutOfRangeException()
         };
         renderer.Sprite = sprite;
-        renderer.ProportionallyScaleByWidth(450);
+        //renderer.ProportionallyScaleByWidth(450);
         SpriteFade(renderer, direction, true);
     }
     

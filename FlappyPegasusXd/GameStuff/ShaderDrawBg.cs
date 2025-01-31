@@ -18,13 +18,19 @@ public class ShaderDrawBg : Behaviour {
         Shader.SetVector2("direction", -Vector2.UnitX);
     }
 
+    private float _time = 0f; 
+
+    void Update() {
+        _time += Time.DeltaF;
+    }
+
      void Render() {
         if (Texture is null) return;
         Matrix4x4.Decompose(Transform.GlobalMatrix, out var scale, out _, out _);
         var position = new Vector2(Transform.Position.X, Transform.Position.Y);
         var renderScale = Raylib.GetRenderHeight() / 288f;
         Shader.SetFloat("speed", Speed);
-        Shader.SetFloat("time", (float)Time.CurrentTime);
+        Shader.SetFloat("time", _time);
         using (Shader.Attach()) {
             Texture.Draw(
                 new Rectangle(0, 0,   Raylib.GetRenderWidth()/renderScale, Texture.Height), 
