@@ -32,11 +32,11 @@ public class SmallEnemyAi : EnemyAi {
             Transform.Position.ToVector2(), 
             Transform.Position.ToVector2()+MoveDirection*16,
             new QueryFilter<PhysicsCategory> {Mask = PhysicsCategory.Buildings | PhysicsCategory.Player, Category = PhysicsCategory.Trigger},
-            static (Shape shape, Vector2 point, Vector2 normal, float fraction, ref GameObject? ctx) => {
+            static (shape, point, normal, fraction, ctx) => {
                 var rb = (Rigidbody2D)(shape.Body.UserData);
                 ctx = rb.GameObject;
                 return 0f;
-            }, ref context);
+            }, context);
         return context is not null;
         //check if next to it run direction is a breakable
     }

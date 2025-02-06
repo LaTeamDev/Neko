@@ -59,10 +59,10 @@ public class Player : Entity {
         Rigidbody.World.OverlapAABB(
             new AABB(pos-HitboxSize, pos+HitboxSize), 
             new QueryFilter<PhysicsCategory> {Mask = PhysicsCategory.Buildings, Category = PhysicsCategory.Trigger},
-            static (Shape shape, ref object? ctx) => {
+            static (shape, ctx) => {
             Log.Verbose("hit {rb}", ((Rigidbody2D)shape.Body.UserData).GameObject.Name);
             return true;
-        }, ref context);
+        }, context);
     }
 
     public override void Update() {

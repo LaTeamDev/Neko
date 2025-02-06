@@ -47,7 +47,7 @@ public class WalkController : IController {
                 ref circle, 
                 new Transform() { Position = Player.Transform.Position.ToVector2(), Rotation = Rotation.Identity},
                 new QueryFilter<PhysicsCategory> {Mask = PhysicsCategory.All, Category = PhysicsCategory.All},
-                 (Shape shape, ref object? ctx) =>
+                 (shape, ctx) =>
                 {
                     Rigidbody2D rb = (Rigidbody2D)shape.Body.UserData;
                     if (rb.GameObject is Usable usable && !used && usable.CanUse(Player))
@@ -56,7 +56,7 @@ public class WalkController : IController {
                         used = true;
                     }
                     return true;
-                }, ref context);
+                }, context);
         }
 
         if (Input.IsPressed("attack1"))

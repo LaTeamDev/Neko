@@ -142,7 +142,7 @@ public class Rigidbody2D : Behaviour {
     void Start() {
         _bodyDef.Position = Transform.Position.ToVector2();
         _bodyDef.UserData = this;
-        _body = _world.CreateBody(_bodyDef);
+        _body = new Body(_world, _bodyDef);
         var colliders = GameObject.GetComponentsInChildren().Where(
             component => component.GetType().IsAssignableTo(typeof(Collider))
         ).Cast<Collider>();

@@ -46,8 +46,7 @@ public class MiniGameScene : Scene {
 
         var overlay = gameObject.AddChild("Overlay").AddComponent<SpriteRenderer2D>();
         overlay.Sprite = Sprite.Load("sprites/minigame/overlay.nrs");
-        overlay.Width = 1280/2;
-        overlay.Height = 720/2;
+        overlay.Transform.LocalScale = Vector3.One * 0.5f;
         overlay.BlendMode = BlendMode.BLEND_ADDITIVE;
         
         CreateCollider(new RectangleF(-90f, 50f, 64f, 64f));
