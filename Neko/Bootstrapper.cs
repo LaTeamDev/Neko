@@ -10,11 +10,9 @@ using NekoLib.Extra;
 using NekoLib.Filesystem;
 using NekoLib.Tools;
 using NekoLib.Tools;
-using NekoRay.Compat;
+using Neko.Compat;
 using Serilog;
 using Tomlyn;
-using Console = NekoLib.Extra.Console;
-using Console = System.Console;
 
 namespace Neko;
 
