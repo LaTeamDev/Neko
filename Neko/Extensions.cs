@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Box2D.Interop;
 using ImGuiNET;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
 
 namespace Neko; 
@@ -43,7 +44,7 @@ public static class Extensions {
         file.CopyTo(span);
         return fontAtlas.AddFontFromMemoryTTF(ptr, span.Length, size_pixels, font_cfg);
     }
-
+    
     public static Vector2 ToVector2(this Point point) => new(point.X, point.Y);
     public static Vector2 ToVector2(this Size point) => new(point.Width, point.Height);
     public static Point ToPoint(this Vector2 vector) => new((int)vector.X, (int)vector.Y);

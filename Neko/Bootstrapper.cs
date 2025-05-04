@@ -5,11 +5,16 @@ using Microsoft.Extensions.Logging;
 using Neko.Sdl;
 using Neko.Sdl.Extra.MessageBox;
 using NekoLib.Extra;
+using Microsoft.Extensions.Logging;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
 using NekoLib.Tools;
+using NekoLib.Tools;
+using NekoRay.Compat;
 using Serilog;
 using Tomlyn;
 using Console = NekoLib.Extra.Console;
+using Console = System.Console;
 
 namespace Neko;
 
@@ -123,7 +128,7 @@ public static class Bootstrapper {
         using var factory = LoggerFactory.Create(builder => builder.AddSerilog().AddNekoLibConsole());
         var logger = factory.CreateLogger("Neko");
         GC.KeepAlive(typeof(ToolBehaviour)); //hack
-        Console.Init(logger);
+        NekoLib.Extra.Console.Init(logger, new NekoLibVfs());
         GameWindow.Instance?.Run(args);
         GameWindow.Instance?.Dispose();
         NekoSDL.Quit();

@@ -14,6 +14,22 @@
         />
     </ItemGroup>
 
+    <ItemGroup Condition="Exists('..\..\NekoLib')">
+        <ProjectReference Include="..\..\NekoLib\NekoLib\NekoLib.csproj" />
+        <ProjectReference Include="..\..\NekoLib\NekoLib.Tools\NekoLib.Tools.csproj" />
+        <ProjectReference Include="..\..\NekoLib\NekoLib.Extra\NekoLib.Extra.csproj" />
+        <ProjectReference Include="..\..\NekoLib\NekoLib.Filesystem\NekoLib.Filesystem.csproj" />
+        <ProjectReference Include="..\..\NekoLib\NekoLib.Console\NekoLib.Console.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="!Exists('..\..\NekoLib')">
+        <PackageReference Include="VanderCat.NekoLib" Version="0.7.0"/>
+        <PackageReference Include="VanderCat.NekoLib.Tools" Version="0.7.0"/>
+        <PackageReference Include="VanderCat.NekoLib.Extra" Version="0.7.0"/>
+        <PackageReference Include="VanderCat.NekoLib.Filesystem" Version="0.7.0"/>
+        <PackageReference Include="VanderCat.NekoLib.Console" Version="0.7.0"/>
+    </ItemGroup>
+
     <Target Name="SetupDirAfterBuild" AfterTargets="Build" Condition="'$(NekoRayProjectId)' != '' And '$(SkipCopy)' != 'true'">
         <ItemGroup>
             <_BinItems Include="$(OutDir)\client.*" /> <!--TODO: add support for server-->

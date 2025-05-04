@@ -27,7 +27,7 @@ public static class AssetCache {
     public static IAsset Add(IAsset asset) {
         if (asset.Path is null or "") 
             throw new ArgumentException("Attempt to cache asset with empty path", nameof(asset));
-        Cache.Add(asset.Path, asset);
+        Cache.Add($"{asset.GetType()}@{asset.Path}", asset);
         return asset;
     }
 
@@ -36,21 +36,22 @@ public static class AssetCache {
         return (TAsset)Add((IAsset)asset);
     }
 
-    public static bool TryGet(string path, [MaybeNullWhen(false)] out IAsset asset) => Cache.TryGetValue(path, out asset);
+    public static bool TryGet(string path, [MaybeNullWhen(false)] out IAsset asset) {
+        asset = Cache.FirstOrDefault(pair => pair.Key.Split('@')[1] == path).Value;
+        return asset is not null;
+    }
+
     public static IAsset Get(string path) => Cache[path];
 
     public static bool TryGet<TAsset>(string path, [MaybeNullWhen(false)] out TAsset asset) where TAsset : class?, IAsset? {
-        if (!TryGet(path, out var iasset)) {
-            asset = null;
-            return false;
-        }
-
-        if (iasset is TAsset correctAsset) {
-            asset = correctAsset;
+        if (Cache.TryGetValue($"{typeof(TAsset)}@{path}", out var asset1)) {
+            if (asset1 is not TAsset asset2) 
+                throw new Exception("the cached asset of correct type contains object of wrong type?? how??");
+            asset = asset2;
             return true;
         }
-        
-        throw new ArgumentException("Attempt to get cached asset with wrong type", nameof(TAsset));
+        asset = null;
+        return false;
     }
 
     public static TAsset Get<TAsset>(string path) where TAsset : class, IAsset {

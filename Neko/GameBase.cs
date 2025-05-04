@@ -1,19 +1,14 @@
 using ImGuiNET;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Neko.Tools;
+using NekoLib.Extra;
 using NekoLib.Filesystem;
-using Neko.Physics2D;
 using Neko.Sdl;
 using Neko.Sdl.ImGuiBackend;
-using Neko.Sdl.Video;
-using NekoLib.Extra;
 using NekoLib.Tools;
-using SDL;
 using Serilog;
 using Serilog.Events;
-using Console = NekoLib.Extra.Console;
 using ILogger = Serilog.ILogger;
+using Console = NekoLib.Extra.Console;
 
 namespace Neko; 
 

@@ -7,7 +7,7 @@ namespace Neko.Data;
 
 public class SpriteFile {
     public string Texture { get; set; }
-    public Rectangle Bounds { get; set; }
+    public RectangleF Bounds { get; set; }
     public Vector2 Origin { get; set; }
     public float PixelSize { get; set; }
     public Dictionary<string, Vector2> AttachmentPoints { get; set; }
