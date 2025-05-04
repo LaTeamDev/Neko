@@ -1,6 +1,0 @@
-{
-  "texture": "textures/dialogues/vedal neutral.png",
-  "bounds": {"x": 0, "y": 0, "width": 3128, "height": 2391},
-  "origin": {"x": 1564, "y": 1195.5},
-  "pixelSize": 0.144
-}
